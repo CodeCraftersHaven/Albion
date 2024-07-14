@@ -1,0 +1,9 @@
+{
+  "language": "typescript",
+  "paths": {
+    "base": "src",
+    "commands": "commands",
+    "events": "events",
+    "plugins": "Structures/sern/plugins"
+  }
+}

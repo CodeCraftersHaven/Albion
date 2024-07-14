@@ -1,0 +1,29 @@
+{
+  "extends": "./.sern/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "ESNext",
+    "rootDir": "src",
+    "strict": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": true,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    "paths": {
+      "#bot": ["./src/Structures/client/Albion"],
+      "#sern": ["./src/Structures/sern/sIndex"],
+      "#adapters": ["./src/Structures/adapters/aIndex"]
+    }
+  },
+  "include": ["./src/**/*", "./src/**/*.ts", "./prisma/*"],
+  "exclude": ["node_modules", "dist"]
+}
