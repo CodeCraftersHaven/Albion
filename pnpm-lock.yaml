@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@prisma/client':
         specifier: 5.16.1
-        version: 5.16.1(prisma@5.16.2)
+        version: 5.16.1(prisma@5.17.0)
       '@sern/handler':
-        specifier: 4.0.0-dev.04c4625.0
-        version: 4.0.0-dev.04c4625.0
+        specifier: ^3.3.4
+        version: 3.3.4
       '@spark.ts/logger':
         specifier: ^1.4.0
         version: 1.4.0
@@ -32,7 +32,7 @@ importers:
         version: 17.0.45
       prisma:
         specifier: ^5.16.2
-        version: 5.16.2
+        version: 5.17.0
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -76,20 +76,20 @@ packages:
       prisma:
         optional: true
 
-  '@prisma/debug@5.16.2':
-    resolution: {integrity: sha512-ItzB4nR4O8eLzuJiuP3WwUJfoIvewMHqpGCad+64gvThcKEVOtaUza9AEJo2DPqAOa/AWkFyK54oM4WwHeew+A==}
+  '@prisma/debug@5.17.0':
+    resolution: {integrity: sha512-l7+AteR3P8FXiYyo496zkuoiJ5r9jLQEdUuxIxNCN1ud8rdbH3GTxm+f+dCyaSv9l9WY+29L9czaVRXz9mULfg==}
 
-  '@prisma/engines-version@5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303':
-    resolution: {integrity: sha512-HkT2WbfmFZ9WUPyuJHhkiADxazHg8Y4gByrTSVeb3OikP6tjQ7txtSUGu9OBOBH0C13dPKN2qqH12xKtHu/Hiw==}
+  '@prisma/engines-version@5.17.0-31.393aa359c9ad4a4bb28630fb5613f9c281cde053':
+    resolution: {integrity: sha512-tUuxZZysZDcrk5oaNOdrBnnkoTtmNQPkzINFDjz7eG6vcs9AVDmA/F6K5Plsb2aQc/l5M2EnFqn3htng9FA4hg==}
 
-  '@prisma/engines@5.16.2':
-    resolution: {integrity: sha512-qUxwMtrwoG3byd4PbX6T7EjHJ8AUhzTuwniOGkh/hIznBfcE2QQnGakyEq4VnwNuttMqvh/GgPFapHQ3lCuRHg==}
+  '@prisma/engines@5.17.0':
+    resolution: {integrity: sha512-+r+Nf+JP210Jur+/X8SIPLtz+uW9YA4QO5IXA+KcSOBe/shT47bCcRMTYCbOESw3FFYFTwe7vU6KTWHKPiwvtg==}
 
-  '@prisma/fetch-engine@5.16.2':
-    resolution: {integrity: sha512-sq51lfHKfH2jjYSjBtMjP+AznFqOJzXpqmq6B9auWrlTJrMgZ7lPyhWUW7VU7LsQU48/TJ+DZeIz8s9bMYvcHg==}
+  '@prisma/fetch-engine@5.17.0':
+    resolution: {integrity: sha512-ESxiOaHuC488ilLPnrv/tM2KrPhQB5TRris/IeIV4ZvUuKeaicCl4Xj/JCQeG9IlxqOgf1cCg5h5vAzlewN91Q==}
 
-  '@prisma/get-platform@5.16.2':
-    resolution: {integrity: sha512-cXiHPgNLNyj22vLouPVNegklpRL/iX2jxTeap5GRO3DmCoVyIHmJAV1CgUMUJhHlcol9yYy7EHvsnXTDJ/PKEA==}
+  '@prisma/get-platform@5.17.0':
+    resolution: {integrity: sha512-UlDgbRozCP1rfJ5Tlkf3Cnftb6srGrEQ4Nm3og+1Se2gWmCZ0hmPIi+tQikGDUVLlvOWx3Gyi9LzgRP+HTXV9w==}
 
   '@sapphire/async-queue@1.5.2':
     resolution: {integrity: sha512-7X7FFAA4DngXUl95+hYbUF19bp1LGiffjJtu7ygrZrbdCSsdDDBaSjB7Akw0ZbOu6k0xpXyljnJ6/RZUvLfRdg==}
@@ -103,8 +103,8 @@ packages:
     resolution: {integrity: sha512-jjmJywLAFoWeBi1W7994zZyiNWPIiqRRNAmSERxyg93xRGzNYvGjlZ0gR6x0F4gPRi2+0O6S71kOZYyr3cxaIQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
 
-  '@sern/handler@4.0.0-dev.04c4625.0':
-    resolution: {integrity: sha512-sSsPDN6nZSeD29MOFNK+WhXxiMPmhwMZIAIVxVpKqrifgNbPsllRYVLJImaPFKpW3fE6KUDnz0rN8PHChkBvPQ==}
+  '@sern/handler@3.3.4':
+    resolution: {integrity: sha512-kQQV31BUv5L1EiVapCwzZQMLtBwuRdu7+fwn1NMFDcOtRlyfcXwQYrUERNLE4Gj638egjDzIg/L0d5Bb+t/VrA==}
     engines: {node: '>= 18.16.x'}
 
   '@spark.ts/logger@1.4.0':
@@ -116,8 +116,8 @@ packages:
   '@types/ws@8.5.11':
     resolution: {integrity: sha512-4+q7P5h3SpJxaBft0Dzpbr6lmMaqh0Jr2tbhJZ/luAwvD7ohSCniYkwz/pLxuT2h0EOa6QADgJj1Ko+TzRfZ+w==}
 
-  '@vladfrangu/async_event_emitter@2.4.3':
-    resolution: {integrity: sha512-wn15EJHUk2RDtCw6wVJndUhFbfJYwyNhSD9s+yiQi5c2MmXDy3KLWvZ5LrcOzt3CHdscoAnaJrxIRKBI1QQgGw==}
+  '@vladfrangu/async_event_emitter@2.4.4':
+    resolution: {integrity: sha512-ZL62PFXEIeGUI8btfJ5S8Flc286eU1ZUSjwyFQtIGXfRUDPZKO+CDJMYb1R71LjGWRZ4n202O+a6FGjsgTw58g==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
 
   ansi-colors@4.1.3:
@@ -158,8 +158,8 @@ packages:
   magic-bytes.js@1.10.0:
     resolution: {integrity: sha512-/k20Lg2q8LE5xiaaSkMXk4sfvI+9EGEykFS4b0CHHGWqDYU0bGUFSwchNOMA56D7TCs9GwVTkqe9als1/ns8UQ==}
 
-  prisma@5.16.2:
-    resolution: {integrity: sha512-rFV/xoBR2hBGGlu4LPLQd4U8WVA+tSAmYyFWGPRVfj+xg7N4kiZV4lSk38htSpF+/IuHKzlrbh4SFk8Z18cI8A==}
+  prisma@5.17.0:
+    resolution: {integrity: sha512-m4UWkN5lBE6yevqeOxEvmepnL5cNPEjzMw2IqDB59AcEV6w7D8vGljDLd1gPFH+W6gUxw9x7/RmN5dCS/WTPxA==}
     engines: {node: '>=16.13'}
     hasBin: true
 
@@ -174,9 +174,6 @@ packages:
 
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
-  tslib@2.6.3:
-    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
 
   typescript@5.5.3:
     resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
@@ -229,7 +226,7 @@ snapshots:
       '@discordjs/util': 1.1.0
       '@sapphire/async-queue': 1.5.2
       '@sapphire/snowflake': 3.5.3
-      '@vladfrangu/async_event_emitter': 2.4.3
+      '@vladfrangu/async_event_emitter': 2.4.4
       discord-api-types: 0.37.83
       magic-bytes.js: 1.10.0
       tslib: 2.6.2
@@ -244,7 +241,7 @@ snapshots:
       '@discordjs/util': 1.1.0
       '@sapphire/async-queue': 1.5.2
       '@types/ws': 8.5.11
-      '@vladfrangu/async_event_emitter': 2.4.3
+      '@vladfrangu/async_event_emitter': 2.4.4
       discord-api-types: 0.37.83
       tslib: 2.6.2
       ws: 8.18.0
@@ -252,30 +249,30 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@prisma/client@5.16.1(prisma@5.16.2)':
+  '@prisma/client@5.16.1(prisma@5.17.0)':
     optionalDependencies:
-      prisma: 5.16.2
+      prisma: 5.17.0
 
-  '@prisma/debug@5.16.2': {}
+  '@prisma/debug@5.17.0': {}
 
-  '@prisma/engines-version@5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303': {}
+  '@prisma/engines-version@5.17.0-31.393aa359c9ad4a4bb28630fb5613f9c281cde053': {}
 
-  '@prisma/engines@5.16.2':
+  '@prisma/engines@5.17.0':
     dependencies:
-      '@prisma/debug': 5.16.2
-      '@prisma/engines-version': 5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303
-      '@prisma/fetch-engine': 5.16.2
-      '@prisma/get-platform': 5.16.2
+      '@prisma/debug': 5.17.0
+      '@prisma/engines-version': 5.17.0-31.393aa359c9ad4a4bb28630fb5613f9c281cde053
+      '@prisma/fetch-engine': 5.17.0
+      '@prisma/get-platform': 5.17.0
 
-  '@prisma/fetch-engine@5.16.2':
+  '@prisma/fetch-engine@5.17.0':
     dependencies:
-      '@prisma/debug': 5.16.2
-      '@prisma/engines-version': 5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303
-      '@prisma/get-platform': 5.16.2
+      '@prisma/debug': 5.17.0
+      '@prisma/engines-version': 5.17.0-31.393aa359c9ad4a4bb28630fb5613f9c281cde053
+      '@prisma/get-platform': 5.17.0
 
-  '@prisma/get-platform@5.16.2':
+  '@prisma/get-platform@5.17.0':
     dependencies:
-      '@prisma/debug': 5.16.2
+      '@prisma/debug': 5.17.0
 
   '@sapphire/async-queue@1.5.2': {}
 
@@ -286,7 +283,7 @@ snapshots:
 
   '@sapphire/snowflake@3.5.3': {}
 
-  '@sern/handler@4.0.0-dev.04c4625.0':
+  '@sern/handler@3.3.4':
     dependencies:
       callsites: 3.1.0
       iti: 0.6.0
@@ -303,7 +300,7 @@ snapshots:
     dependencies:
       '@types/node': 17.0.45
 
-  '@vladfrangu/async_event_emitter@2.4.3': {}
+  '@vladfrangu/async_event_emitter@2.4.4': {}
 
   ansi-colors@4.1.3: {}
 
@@ -345,21 +342,19 @@ snapshots:
 
   magic-bytes.js@1.10.0: {}
 
-  prisma@5.16.2:
+  prisma@5.17.0:
     dependencies:
-      '@prisma/engines': 5.16.2
+      '@prisma/engines': 5.17.0
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.6.2
 
   ts-mixer@6.0.4: {}
 
   ts-results-es@4.2.0: {}
 
   tslib@2.6.2: {}
-
-  tslib@2.6.3: {}
 
   typescript@5.5.3: {}
 

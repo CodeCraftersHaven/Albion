@@ -34,7 +34,7 @@
   ],
   "dependencies": {
     "@prisma/client": "5.16.1",
-    "@sern/handler": "4.0.0-dev.04c4625.0",
+    "@sern/handler": "^3.3.4",
     "@spark.ts/logger": "^1.4.0",
     "colorette": "^2.0.20",
     "discord.js": "latest",
