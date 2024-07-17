@@ -4,3 +4,4 @@
 assets
 .sern
 pnpm-lock.yaml
+src/Structures/sern/plugins/publishConfig.ts
