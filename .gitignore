@@ -3,3 +3,4 @@
 .env
 assets
 .sern
+pnpm-lock.yaml
