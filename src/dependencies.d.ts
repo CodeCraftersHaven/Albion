@@ -1,8 +1,8 @@
 import { CoreDependencies, Singleton } from '@sern/handler';
-import { Albion } from '#bot';
 import { Sparky } from '#sern';
 import { PrismaClient } from '@prisma/client';
 import { Cooldowns, TFD } from '#adapters';
+import { Albion } from '#bot';
 
 declare global {
   interface Dependencies extends CoreDependencies {
