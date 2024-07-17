@@ -16,4 +16,7 @@ await makeDependencies(({ add, swap }) => {
   add('nexon', () => nexon);
 });
 
-Sern.init('file');
+Sern.init({
+  commands: 'dist/commands',
+  events: 'dist/events'
+});
