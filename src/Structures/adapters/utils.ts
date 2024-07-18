@@ -1,4 +1,12 @@
-import { AttachmentBuilder, PermissionResolvable, PermissionsBitField } from 'discord.js';
+import {
+  AttachmentBuilder,
+  Colors,
+  EmbedBuilder,
+  EmbedField,
+  PermissionResolvable,
+  PermissionsBitField,
+  User
+} from 'discord.js';
 import path from 'path';
 import fs from 'fs/promises';
 import { env } from '#sern';
@@ -76,3 +84,35 @@ export const cooldownDurations = {
   d: 60 * 60 * 24
 };
 /*******************************************/
+
+export const displayData = (opts: {
+  user: User;
+  title: string;
+  description?: string;
+  fields?: EmbedField[];
+  image?: string;
+  thumbnail?: string;
+}) => {
+  const { title, user, description, fields, image, thumbnail } = opts;
+  return new EmbedBuilder({
+    author: {
+      name: 'Albion Guide',
+      icon_url: 'https://cdn.discordapp.com/avatars/1263202205851193447/6f3d502651a0eeb1825ee59d5741ccee?size=128'
+    },
+    title,
+    description: description ?? '',
+    fields: fields ?? [],
+    footer: {
+      text: `Requested by: ${user.displayName}`,
+      icon_url: user.avatarURL() ?? ''
+    },
+    timestamp: Date.now(),
+    color: Colors.Blurple,
+    image: {
+      url: image ?? ''
+    },
+    thumbnail: {
+      url: thumbnail ?? ''
+    }
+  });
+};
