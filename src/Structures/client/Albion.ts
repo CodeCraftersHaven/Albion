@@ -6,16 +6,15 @@ export class Albion extends Client {
     super({
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
       allowedMentions: {
-        repliedUser: false // Do not mention user in reply!
+        repliedUser: false
       },
       shards: 'auto'
     });
     this.on('ready', async () => {
       await this.updateStatus();
-      // Update the status every 20 minutes
       setInterval(async () => {
         await this.updateStatus();
-      }, 20 * 60 * 1000); // 20 minutes
+      }, 5 * 60 * 1000);
     });
     this.login();
   }
@@ -27,7 +26,7 @@ export class Albion extends Client {
       for (const guild of this.guilds.cache.values()) {
         const members = await guild.members.fetch();
         members.forEach((member) => {
-          if (!member.user.bot) {
+          if (!member.user.bot && !uniqueMembers.has(member.user.id)) {
             uniqueMembers.add(member.user.id);
           }
         });
