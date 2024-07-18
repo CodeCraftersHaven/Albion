@@ -304,10 +304,10 @@ export interface GlobalBaseStats {
 }
 
 //Global Void Intercept Battle Data
-export interface GlobalVoidStatsData {
-  stat_id: string;
-  stat_name: string;
-}
+export type GlobalVoidStatsData = {
+  void_battle_id: string;
+  void_battle_name: string;
+}[];
 
 //Global Titles Data
 interface GlobalTitle {
@@ -337,6 +337,23 @@ export interface CombinedMetaData {
   titles: GlobalTitles;
 }
 
+//recommendations
+export type RecommendationData = {
+  descendant: {
+    descendant_id: string;
+    recommendation: {
+      module_id: string;
+    }[];
+  };
+  weapon: {
+    weapon_id: string;
+    recommendation: {
+      module_id: string;
+    }[];
+  };
+};
+
+//extras
 export const imgs = {
   steam: 'https://cdn.freebiesupply.com/images/large/2x/steam-logo-black-transparent.png',
   xbox: 'https://www.freeiconspng.com/uploads/xbox-icon-2.png',

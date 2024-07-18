@@ -13,6 +13,7 @@ import type {
   GlobalWeaponData,
   LanguageGame,
   MetaData,
+  RecommendationData,
   UID,
   UserComponent,
   UserDescendant,
@@ -196,5 +197,14 @@ export class TFD {
 
   public getMetadata(): CombinedMetaData | null {
     return this.metadata;
+  }
+
+  public async moduleRecommendation(descendantId: string, weaponId: string, voidBattleId: string, period: string) {
+    const response = await this.nexonFetch(
+      `tfd/v1/recommendation/module?descendant_id=${descendantId}&weapon_id=${weaponId}&void_battle_id=${voidBattleId}&period=${period}`
+    );
+
+    const data: RecommendationData = await response.json();
+    return data;
   }
 }
