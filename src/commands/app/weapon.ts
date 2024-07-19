@@ -175,16 +175,18 @@ export default commandModule({
         }
 
         if (str || str1 || str2) {
-          title = 'List of weapons';
-          if (str) title += ` by type: ${str}`;
-          if (str1) title += `, tier: ${str1}`;
-          if (str2) title += `, ammo type: ${str2}`;
-          description = filteredWeapons.map((w) => w.weapon_name).join('\n');
+          title = 'List of weapons based on your query';
+          if (str) description += `**Weapon Type**: ${str}\n`;
+          if (str1) description += `**Weapon Tier**: ${str1}\n`;
+          if (str2) description += `**Ammo Type**: ${str2}\n`;
+          description += `\n**__Weapons__:**\n` + filteredWeapons.map((w) => w.weapon_name).join('\n');
         } else {
           title = 'List of all weapons in the game';
           description = weapons.map((w) => w.weapon_name).join('\n');
         }
-
+        if (description.length < 1) {
+          description = 'No weapons were found matching your query.';
+        }
         const listDisplay = displayData({
           user: ctx.user,
           title,
