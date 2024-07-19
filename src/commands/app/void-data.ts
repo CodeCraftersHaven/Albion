@@ -87,7 +87,7 @@ export default commandModule({
       ]
     }
   ],
-  execute: async (ctx) => {
+  execute: async (ctx, { deps }) => {
     const { options } = ctx.interaction;
     const [des, weapon, battle, period] = [
       options.getString('descendant', true),
@@ -97,9 +97,9 @@ export default commandModule({
     ];
 
     try {
-      const TFD = Service('nexon');
-      const recommendation = await TFD.moduleRecommendation(des, weapon, battle, period);
-      const { descendant, weapon: weapons, voidBattle, module } = TFD.getMetadata()!;
+      const { getMetadata, moduleRecommendation } = deps.nexon;
+      const recommendation = await moduleRecommendation(des, weapon, battle, period);
+      const { descendant, weapon: weapons, voidBattle, module } = getMetadata()!;
       const descendantName = descendant.find((d) => d.descendant_id === des)?.descendant_name;
       const weaponName = weapons.find((w) => w.weapon_id === weapon)?.weapon_name;
       const voidBattleName = voidBattle.find((vb) => vb.void_battle_id === battle)?.void_battle_name;
