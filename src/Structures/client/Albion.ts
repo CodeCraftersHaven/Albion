@@ -1,5 +1,5 @@
 import { Cooldowns } from '#adapters';
-import { ActivityType, Client, GatewayIntentBits, Partials } from 'discord.js';
+import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 
 export class Albion extends Client {
   constructor(private cooldowns: Cooldowns) {
@@ -14,7 +14,7 @@ export class Albion extends Client {
       await this.updateStatus();
       setInterval(async () => {
         await this.updateStatus();
-      }, 5 * 60 * 1000);
+      }, 180000); // 3 minutes
     });
     this.login();
   }
@@ -22,8 +22,9 @@ export class Albion extends Client {
   private async updateStatus() {
     try {
       let uniqueMembers = new Set();
-
+      let count = 0;
       for (const guild of this.guilds.cache.values()) {
+        count++;
         const members = await guild.members.fetch();
         members.forEach((member) => {
           if (!member.user.bot && !uniqueMembers.has(member.user.id)) {
@@ -33,8 +34,26 @@ export class Albion extends Client {
       }
 
       const numberOfDescendants = uniqueMembers.size;
+      let acts = [
+        { 
+          name: `over ${numberOfDescendants} Descendants`, 
+          type: ActivityType.Watching 
+        }, 
+        { 
+          name: `over ${count} servers`, 
+          type: ActivityType.Watching 
+        }
+      ];
+      
+      const currentAct = acts.shift();
       this.user?.setPresence({
-        activities: [{ name: `over ${numberOfDescendants} Descendants`, type: ActivityType.Watching }]
+        activities: [
+          {
+            name: currentAct!.name.toString(),
+            type: currentAct!.type
+          }
+        ], 
+        status: 'online'
       });
     } catch (error) {
       console.error('Failed to update status:', error);

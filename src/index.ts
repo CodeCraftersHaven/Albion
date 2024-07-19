@@ -9,11 +9,11 @@ await makeDependencies(({ add, swap }) => {
   const cooldown = new Cooldowns(prisma);
   const client = new Albion(cooldown);
   const nexon = new TFD(env.TFD_API_KEY, prisma, logger);
-  swap('@sern/logger', () => logger);
-  add('prisma', () => prisma);
-  add('cooldowns', () => cooldown);
-  add('@sern/client', () => client);
-  add('nexon', () => nexon);
+  swap('@sern/logger', logger);
+  add('prisma', prisma);
+  add('cooldowns', cooldown);
+  add('@sern/client', client);
+  add('nexon', nexon);
 });
 
 Sern.init({
