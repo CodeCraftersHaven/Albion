@@ -298,10 +298,10 @@ interface MapReward {
 export type GlobalRewardData = MapReward[];
 
 //Global Base Stat Data
-export interface GlobalBaseStats {
+export type GlobalBaseStats = {
   stat_id: string;
   stat_name: string;
-}
+}[];
 
 //Global Void Intercept Battle Data
 export type GlobalVoidStatsData = {
