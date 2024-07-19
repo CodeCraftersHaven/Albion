@@ -58,19 +58,21 @@ npm run build
 npm run gen
 ```
 
-7.) Run
+7.) Rename `/assets/logs.txt.example` -> `/assets/logs.txt`
+
+8.) Run
 
 ```
 node .
 ```
 
-8.) Publish
+9.) Publish
 
 ```
 npm run commands:publish
 ```
 
-9.) Refresh Discord Client to see commands.
+10.) Refresh Discord Client to see commands.
 
 ## Instructions to get a Discord Token:
 
