@@ -35,16 +35,16 @@ export class Albion extends Client {
 
       const numberOfDescendants = uniqueMembers.size;
       let acts = [
-        { 
-          name: `over ${numberOfDescendants} Descendants`, 
-          type: ActivityType.Watching 
-        }, 
-        { 
-          name: `over ${count} servers`, 
-          type: ActivityType.Watching 
+        {
+          name: `over ${numberOfDescendants} Descendants`,
+          type: ActivityType.Watching
+        },
+        {
+          name: `over ${count} servers`,
+          type: ActivityType.Watching
         }
       ];
-      
+
       const currentAct = acts.shift();
       this.user?.setPresence({
         activities: [
@@ -52,7 +52,7 @@ export class Albion extends Client {
             name: currentAct!.name.toString(),
             type: currentAct!.type
           }
-        ], 
+        ],
         status: 'online'
       });
     } catch (error) {
@@ -60,3 +60,5 @@ export class Albion extends Client {
     }
   }
 }
+
+export * from './configTypes.js';
