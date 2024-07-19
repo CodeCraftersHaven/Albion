@@ -5,3 +5,4 @@ assets/logs.txt
 .sern
 pnpm-lock.yaml
 src/Structures/sern/plugins/publishConfig.ts
+src/Structures/client/config.json
