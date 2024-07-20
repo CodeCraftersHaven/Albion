@@ -2,6 +2,7 @@ import { Sern, makeDependencies } from '@sern/handler';
 import { Albion } from '#bot';
 import { env, Sparky } from '#sern';
 import { Cooldowns, TFD, Prisma } from '#adapters';
+import { Publisher } from '@sern/publisher';
 
 await makeDependencies(({ add, swap }) => {
   const logger = new Sparky('debug', 'highlight');
@@ -14,6 +15,7 @@ await makeDependencies(({ add, swap }) => {
   add('cooldowns', cooldown);
   add('@sern/client', client);
   add('nexon', nexon);
+  add('@sern/publisher', (deps) => new Publisher(deps['@sern/modules'], deps['@sern/emitter'], deps['@sern/logger']));
 });
 
 Sern.init({
