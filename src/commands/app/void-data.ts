@@ -1,10 +1,17 @@
 import { displayData } from '#adapters';
 import { commandModule, CommandType, Service } from '@sern/handler';
+import { publishConfig } from '@sern/publisher';
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 
 export default commandModule({
   type: CommandType.Slash,
   description: 'Returns the recommended module setup for void battles.',
+  plugins: [
+    publishConfig({
+      contexts: [0, 1, 2],
+      integrationTypes: ['Guild', 'User']
+    })
+  ],
   options: [
     {
       type: ApplicationCommandOptionType.String,
@@ -108,30 +115,31 @@ export default commandModule({
           const moduleName = module.find((mod) => mod.module_id === rec.module_id)?.module_name;
           return moduleName ? moduleName : `Module ID: ${rec.module_id}`;
         })
-        .join(', ');
+        .join('\n');
 
       const recommendedWeaponModules = recommendation.weapon.recommendation
         .map((rec) => {
           const moduleName = module.find((mod) => mod.module_id === rec.module_id)?.module_name;
           return moduleName ? moduleName : `Module ID: ${rec.module_id}`;
         })
-        .join(', ');
+        .join('\n');
       const embeds = [
         displayData({
           user: ctx.user,
           title: `Recommended Module Setup for ${voidBattleName}`,
           fields: [
             {
-              inline: false,
+              inline: true,
               name: `${descendantName} Modules:`,
               value: recommendedDescendantModules
             },
             {
-              inline: false,
+              inline: true,
               name: `${weaponName} Modules:`,
               value: recommendedWeaponModules
             }
-          ]
+          ],
+          description: '*Improvements on the way!**'
         })
       ];
 
@@ -140,7 +148,11 @@ export default commandModule({
         ephemeral: true
       });
     } catch (error) {
-      await ctx.reply({ content: 'Failed to fetch module recommendations. Please try again later.', ephemeral: true });
+      await ctx.reply({
+        content:
+          'Failed to fetch module recommendations. This usually means there have not been any recent void wins with this specific combo.',
+        ephemeral: true
+      });
     }
   }
 });
