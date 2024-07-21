@@ -4,11 +4,9 @@
 
 - A Discord App to get information about The First Descendant game and basic in-game user data made by [© NEXON Korea Corp. & NEXON Games Co, LTD](https://www.nexon.com/main/en).
 
-- This project has been built around the latest version of [discord.js](https://discord.js.org) (v14.15.3) and [@sern/handler](https://sern.dev) (v3.3.4). It is not meant for older or newer versions.
+- This project has been built around the latest version of [discord.js](https://discord.js.org) (v14.15.3) and [@sern/handler](https://sern.dev) (v4.0.1). It is not meant for older versions.
 
-- Planning to upgrade to @sern/handler to v4 upon release so some of the code may change without notice.
-
-- Want to use my favorite discord bot handler? Join our [Discord Server](https://sern.dev/discord) if you need help!
+- Want to use my favorite discord bot handler? Join our [Discord Server](https://sern.dev/discord) if you need help! I highly recommend reading the [docs](https://sern.dev/v4/reference/getting-started) to familiarize yourself with the handler before attempting this! We also always suggest that you have at least basic knowledge of JavaScript/TypeScript languages before trying to code a bot or before asking us for help.
 
 - For help regarding this particular bot, open an issue and ping me.
 
@@ -20,59 +18,43 @@
 
 #### Feel free to use your favorite package manager!
 
-1.) Rename `.env.example` -> `.env`.
+1.) Rename Files:
+
+    .env.example -> .env
+    /assets/logs.txt.example -> /assets/logs.txt
+    /assets/config.json.example -> /assets/config.json (fill this in!)
 
 2.) Fill in required keys. Example:
 
-- None of these are real credentials!
+    DISCORD_TOKEN=MTI2MzIMTE5MzQ0Nw.GuEeNGCIkBz2qrAH4acPh2uJfwyTfsm6GU
+    NODE_ENV=development
+    OWNER_IDS=["DiscordUserID1", "DiscordUserID2", "DiscordUserID3"]
+    TFD_API_KEY=4ab8d7db7c2c7b5a69430cc737adae2b76b2d0045bd35cf2fabdeb93fb0d
+    MONGO_URI=mongodb+srv://username:password@HOST.mongodb.net/collection
 
-```
-DISCORD_TOKEN=MTI2MzIMTE5MzQ0Nw.GuEeNGCIkBz2qrAH4acPh2uJfwyTfsm6GU
-NODE_ENV=development
-OWNER_IDS=["DiscordUserID1", "DiscordUserID2", "DiscordUserID3"]
-TFD_API_KEY=4ab8d7db7c2c7b5a69430cc737adae2b76b2d0045bd35cf2fabdeb93fb0d
-MONGO_URI=mongodb+srv://username:password@HOST.mongodb.net/collection
-```
+    (None of these are real credentials!)
 
 3.) Install the sern cli.
 
-```
-npm install -g @sern/cli
-```
+    npm install -g @sern/cli
 
 4.) Install dependencies.
 
-```
-npm install
-```
+    npm install
 
-5.) Build
+5.) Generate your Prisma Database
 
-```
-npm run build
-```
+    npm run gen
 
-6.) Generate your Prisma Database
+6.) Build
 
-```
-npm run gen
-```
-
-7.) Rename `/assets/logs.txt.example` -> `/assets/logs.txt`
+    npm run build
 
 8.) Run
 
-```
-node .
-```
+    node dist/index.js
 
-9.) Publish
-
-```
-npm run commands:publish
-```
-
-10.) Refresh Discord Client to see commands.
+9.) Refresh Discord Client to see commands.
 
 ## Instructions to get a Discord Token:
 
