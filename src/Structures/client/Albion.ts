@@ -2,6 +2,7 @@ import { Cooldowns } from '#adapters';
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 
 export class Albion extends Client {
+  private actsIndex = 0;
   constructor(private cooldowns: Cooldowns) {
     super({
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
@@ -14,7 +15,7 @@ export class Albion extends Client {
       await this.updateStatus();
       setInterval(async () => {
         await this.updateStatus();
-      }, 180000); // 3 minutes
+      }, 15 * 60 * 1000);
     });
     this.login();
   }
@@ -22,21 +23,33 @@ export class Albion extends Client {
   private async updateStatus() {
     try {
       let uniqueMembers = new Set();
+      let descendants = new Set();
       let count = 0;
       for (const guild of this.guilds.cache.values()) {
         count++;
         const members = await guild.members.fetch();
         members.forEach((member) => {
           if (!member.user.bot && !uniqueMembers.has(member.user.id)) {
+            const isPlayingDescendant = member.presence?.activities.some(
+              (activity) => activity.name === 'The First Descendant'
+            );
+            if (isPlayingDescendant) {
+              descendants.add(member.user.id);
+            }
             uniqueMembers.add(member.user.id);
           }
         });
       }
 
-      const numberOfDescendants = uniqueMembers.size;
+      const numberOfDescendants = descendants.size;
+      const numberOfMembers = uniqueMembers.size;
       let acts = [
         {
           name: `over ${numberOfDescendants} Descendants`,
+          type: ActivityType.Watching
+        },
+        {
+          name: `over ${numberOfMembers} users`,
           type: ActivityType.Watching
         },
         {
@@ -45,7 +58,9 @@ export class Albion extends Client {
         }
       ];
 
-      const currentAct = acts.shift();
+      const currentAct = acts[this.actsIndex];
+      this.actsIndex = (this.actsIndex + 1) % acts.length;
+
       this.user?.setPresence({
         activities: [
           {
