@@ -22,31 +22,22 @@ export default discordEvent({
       entry += `[DMs] - `;
     }
     if (interaction.isCommand()) {
-      entry += `Command: ${interaction.commandName} was used by ${
-        interaction.user.username
-      } in dms at ${new Date().toLocaleString()}\n`;
+      entry += `Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
     if (interaction.isAnySelectMenu()) {
-      entry += `SelectMenu: ${interaction.customId} was used by ${
-        interaction.user.username
-      } in dms at ${new Date().toLocaleString()}\n`;
+      entry += `SelectMenu: ${interaction.customId} was used by ${interaction.user.username}`;
     }
     if (interaction.isButton()) {
-      entry += `Button: ${interaction.customId} was used by ${
-        interaction.user.username
-      } in dms at ${new Date().toLocaleString()}\n`;
+      entry += `Button: ${interaction.customId} was used by ${interaction.user.username}`;
     }
     if (interaction.isModalSubmit()) {
-      entry += `Modal: ${interaction.customId} was submitted by ${
-        interaction.user.username
-      } in dms at ${new Date().toLocaleString()}\n`;
+      entry += `Modal: ${interaction.customId} was submitted by ${interaction.user.username}`;
     }
     if (interaction.isContextMenuCommand()) {
-      entry += `Context Menu Command: ${interaction.commandName} was used by ${
-        interaction.user.username
-      } in dms at ${new Date().toLocaleString()}\n`;
+      entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
 
+    entry += ` at ${new Date().toLocaleString()}\n`;
     try {
       await appendFileAsync('assets/logs.txt', entry);
     } catch (error) {
