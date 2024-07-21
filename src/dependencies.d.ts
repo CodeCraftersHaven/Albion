@@ -3,7 +3,7 @@ import { Sparky } from '#sern';
 import { PrismaClient } from '@prisma/client';
 import { Cooldowns, TFD } from '#adapters';
 import { Albion } from '#bot';
-import { Publisher } from '@sern/publisher';
+import type { Publisher } from '@sern/publisher';
 
 declare global {
   interface Dependencies extends CoreDependencies {
@@ -11,7 +11,7 @@ declare global {
     'prisma': PrismaClient;
     'cooldowns': Cooldowns;
     '@sern/client': Albion;
-    '@sern/publisher': Publisher;
+    'publisher': Publisher;
     'nexon': TFD;
   }
   interface CMDProps {

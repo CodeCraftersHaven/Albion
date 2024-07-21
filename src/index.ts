@@ -15,7 +15,7 @@ await makeDependencies(({ add, swap }) => {
   add('cooldowns', cooldown);
   add('@sern/client', client);
   add('nexon', nexon);
-  add('@sern/publisher', (deps) => new Publisher(deps['@sern/modules'], deps['@sern/emitter'], deps['@sern/logger']));
+  add('publisher', (deps) => new Publisher(deps['@sern/modules'], deps['@sern/emitter'], deps['@sern/logger']));
 });
 
 Sern.init({
