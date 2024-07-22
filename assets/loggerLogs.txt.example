@@ -1,0 +1,12 @@
+2024-07-22T20:15:50.089Z => [PRISMA]- Connecting to Database...
+2024-07-22T20:15:50.089Z => Waiting on discord client to be ready...
+2024-07-22T20:15:50.089Z => No prefix found. message handler shutting down
+2024-07-22T20:15:50.089Z => Events registered
+2024-07-22T20:15:50.089Z => [PRISMA]- Connected to Database!
+2024-07-22T20:15:50.089Z => [TFD]- Connected to OpenAPI!
+2024-07-22T20:15:50.089Z => [COOLDOWNS]- Successfully Loaded Cooldowns!
+2024-07-22T20:15:50.089Z => [CLIENT]- Albion Guide#7110 is online!
+2024-07-22T20:15:50.089Z => Client signaled ready, registering modules
+2024-07-22T20:15:50.089Z => publishing modules
+2024-07-22T20:15:50.089Z => sern: registered in 1.53 s
+2024-07-22T20:15:50.089Z => Publisher: All global commands published.
