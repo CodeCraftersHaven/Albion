@@ -33,6 +33,7 @@
     "discord.js"
   ],
   "dependencies": {
+    "@napi-rs/canvas": "^0.1.53",
     "@prisma/client": "5.17.0",
     "@sern/handler": "^4.0.1",
     "@sern/publisher": "^1.1.2",
