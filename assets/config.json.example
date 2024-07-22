@@ -1,6 +1,7 @@
 {
     "main_guild_id": "",
     "channel_ids": {
-        "emoji-submissions": ""
+        "emoji-submissions": "",
+        "bot-logs": ""
     }
 }
