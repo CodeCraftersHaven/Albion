@@ -1,5 +1,5 @@
 import { discordEvent, Service } from '@sern/handler';
-import { Events } from 'discord.js';
+import { Events, InteractionType } from 'discord.js';
 import { appendFile } from 'fs';
 import { promisify } from 'util';
 
@@ -21,6 +21,7 @@ export default discordEvent({
     } else {
       entry += `[DMs] - `;
     }
+    if (interaction.type === InteractionType.ApplicationCommandAutocomplete) return;
     if (interaction.isCommand()) {
       entry += `Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
@@ -36,7 +37,6 @@ export default discordEvent({
     if (interaction.isContextMenuCommand()) {
       entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
-
     entry += ` at ${new Date().toLocaleString()}\n`;
     try {
       await appendFileAsync('assets/logs.txt', entry);
