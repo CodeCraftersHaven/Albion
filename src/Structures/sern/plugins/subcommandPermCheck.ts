@@ -33,7 +33,7 @@ import { PermissionsBitField, type GuildMember, type PermissionResolvable, type 
 import { type CommandType, CommandControlPlugin, controller } from '@sern/handler';
 
 export function subcommandPermCheck(opts: Options) {
-  return CommandControlPlugin<CommandType.Slash>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Slash>(async (ctx, _tbd) => {
     if (ctx.guild === null || ctx.isMessage()) {
       ctx
         .reply("PermCheck > A command stopped because it was used in dm's or is a possibly a text command.")

@@ -40,7 +40,7 @@ import {
 } from "@sern/handler";
 
 function command(perm: PermissionResolvable, response?: string) {
-  return CommandControlPlugin<CommandType.Both>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Both>(async (ctx, _tbd) => {
     if (ctx.guild === null) {
       await ctx.reply({
         content: "This command cannot be used in DM's!",
@@ -83,7 +83,7 @@ function command(perm: PermissionResolvable, response?: string) {
   });
 }
 function subGroups(opts: BaseOptions[]) {
-  return CommandControlPlugin<CommandType.Slash>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Slash>(async (ctx, _tbd) => {
     if (ctx.isMessage()) {
       return controller.stop()
     }
@@ -148,7 +148,7 @@ function subGroups(opts: BaseOptions[]) {
 }
 
 function subcommands(opts: BaseOptions[]) {
-  return CommandControlPlugin<CommandType.Slash>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Slash>(async (ctx, _tbd) => {
     if (ctx.isMessage()) {
       return controller.stop()
     }
@@ -213,7 +213,7 @@ function subcommands(opts: BaseOptions[]) {
 }
 
 function options(opts: BaseOptions[]) {
-  return CommandControlPlugin<CommandType.Slash>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Slash>(async (ctx, _tbd) => {
     if (ctx.isMessage()) {
       return controller.stop()
     }

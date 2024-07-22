@@ -23,17 +23,14 @@ import { CommandType, CommandControlPlugin, controller } from '@sern/handler';
 import { InteractionReplyOptions, MessageReplyOptions } from 'discord.js';
 
 export function disable(onFail?: string) {
-  return CommandControlPlugin<CommandType.Both>(async (ctx) => {
+  return CommandControlPlugin<CommandType.Both>(async (ctx,) => {
     if (onFail !== undefined) {
-      //response to say the command is disabled with users response.
       await ctx.reply({ content: onFail, ephemeral: true });
     }
-    //this function tells the bot to reply to an interaction so it doesn't seem like it fails (in case there is no onFail message).
     if (onFail === undefined) {
       onFail = 'This command is disabled.';
       await ctx.reply({ content: onFail, ephemeral: true });
     }
-    //stop the command from running
     return controller.stop();
   });
 }

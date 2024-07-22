@@ -45,13 +45,13 @@ export function componentCooldown(
     | CommandType.RoleSelect
     | CommandType.StringSelect
     | CommandType.UserSelect
-  >(async (interaction) => {
+  >(async (interaction, _tbd) => {
     return await getResult(interaction, usage);
   });
 }
 
 export function contextCooldown(usage: Omit<InternalCooldownConfig, 'userId' | 'actionId' | 'guildId' | 'channelId'>) {
-  return CommandControlPlugin<CommandType.CtxMsg | CommandType.CtxUser>(async (interaction) => {
+  return CommandControlPlugin<CommandType.CtxMsg | CommandType.CtxUser>(async (interaction, _tbd) => {
     return await getResult(interaction, usage);
   });
 }
