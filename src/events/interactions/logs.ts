@@ -8,7 +8,7 @@ export default discordEvent({
   execute: async (interaction) => {
     const logger = Service('@sern/logger');
     const appendFileAsync = promisify(appendFile);
-    const client = interaction.client; // Access the client from the interaction
+    const client = interaction.client;
     let entry = '';
 
     if (interaction.inGuild()) {
