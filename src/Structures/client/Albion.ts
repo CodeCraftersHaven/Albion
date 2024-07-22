@@ -45,7 +45,7 @@ export class Albion extends Client {
       const numberOfMembers = uniqueMembers.size;
       let acts = [
         {
-          name: `over ${numberOfDescendants} ${numberOfDescendants === 1 ? 'Descendants' : 'Descendant'}`,
+          name: `over ${numberOfDescendants} ${numberOfDescendants === 1 ? 'Descendant' : 'Descendants'}`,
           type: ActivityType.Watching
         },
         {
