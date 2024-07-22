@@ -1,8 +1,10 @@
 import {
   AttachmentBuilder,
+  AuditLogEvent,
   Colors,
   EmbedBuilder,
   EmbedField,
+  Guild,
   PermissionResolvable,
   PermissionsBitField,
   User
@@ -116,3 +118,46 @@ export const displayData = (opts: {
     }
   });
 };
+
+export const joinEmbed = async (guild: Guild) => {
+  const owner = await guild.fetchOwner();
+  const entry = (await guild.fetchAuditLogs()).entries.filter((e) => e.action === AuditLogEvent.BotAdd).find((e) => e.targetId === '1263202205851193447');
+  return new EmbedBuilder({
+    author: {
+      name: entry?.executor?.username!,
+      icon_url: entry?.executor?.displayAvatarURL() ?? ''
+    },
+    color: Colors.Blurple,
+    image: {url: guild.banner ? guild.bannerURL()! : ''},
+    timestamp: entry?.createdAt!,
+    description: 'I have been added to a new guild!',
+    fields: [
+      {
+        name: 'Guild',
+        value: `\`${guild.name} (${guild.id})\``
+      },
+      {
+        name: 'Guild Owner',
+        value: `[${owner.user.username}](<https://discord.com/users/${owner.id}>) \`(${owner.id})\``
+      },
+      {
+        name: 'Inviter',
+        value: `[${entry?.executor?.username}](<https://discord.com/users/${entry?.executorId}>) \`(${entry?.executorId})\``
+      }
+    ]
+  })
+}
+
+export const leaveEmbed = async (guild: Guild) => {
+  return new EmbedBuilder({
+    color: Colors.Red,
+    timestamp: Date.now(),
+    description: 'I have been removed from a guild!',
+    fields: [
+      {
+        name: 'Guild',
+        value: `\`${guild.name} (${guild.id})\``
+      },
+    ]
+  })
+}
