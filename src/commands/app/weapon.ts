@@ -1,10 +1,17 @@
 import { displayData } from '#adapters';
-import { commandModule, CommandType, Service } from '@sern/handler';
+import { commandModule, CommandType } from '@sern/handler';
 import { ApplicationCommandOptionType } from 'discord.js';
+import { publishConfig } from '@sern/publisher';
 
 export default commandModule({
   type: CommandType.Slash,
   description: 'Gets basic info on weapons.',
+  plugins: [
+    publishConfig({
+      contexts: [0, 1, 2],
+      integrationTypes: ['Guild', 'User']
+    })
+  ],
   options: [
     {
       name: 'list',
@@ -19,8 +26,8 @@ export default commandModule({
           autocomplete: true,
           command: {
             onEvent: [],
-            execute: async (auto) => {
-              const weapons = Service('nexon').getMetadata()!.weapon;
+            execute: async (auto, { deps }) => {
+              const weapons = deps.nexon.getMetadata()!.weapon;
               const focusedOption = auto.options.getFocused().toLowerCase();
 
               const uniqueWeaponTypes = new Set<string>();
@@ -50,8 +57,8 @@ export default commandModule({
           autocomplete: true,
           command: {
             onEvent: [],
-            execute: async (auto) => {
-              const weapons = Service('nexon').getMetadata()!.weapon;
+            execute: async (auto, { deps }) => {
+              const weapons = deps.nexon.getMetadata()!.weapon;
               const focusedOption = auto.options.getFocused().toLowerCase();
 
               const uniqueWeaponTiers = new Set<string>();
@@ -81,8 +88,8 @@ export default commandModule({
           autocomplete: true,
           command: {
             onEvent: [],
-            execute: async (auto) => {
-              const weapons = Service('nexon').getMetadata()!.weapon;
+            execute: async (auto, { deps }) => {
+              const weapons = deps.nexon.getMetadata()!.weapon;
               const focusedOption = auto.options.getFocused().toLowerCase();
 
               const uniqueAmmoTypes = new Set<string>();
@@ -119,10 +126,8 @@ export default commandModule({
           required: true,
           command: {
             onEvent: [],
-            execute: async (autocomplete) => {
-              const TFD = Service('nexon');
-              const meta = TFD.getMetadata()!;
-              const weapons = meta.weapon;
+            execute: async (autocomplete, { deps }) => {
+              const weapons = deps.nexon.getMetadata()!.weapon;
 
               const focusedOption = autocomplete.options.getFocused().toLowerCase();
 
@@ -147,8 +152,10 @@ export default commandModule({
       ]
     }
   ],
-  execute: async (ctx) => {
-    const weapons = Service('nexon').getMetadata()!.weapon;
+  execute: async (ctx, { deps }) => {
+    const meta = deps.nexon.getMetadata()!;
+    const weapons = meta.weapon;
+    const base_stats = meta.stat;
     const { options } = ctx.interaction;
     const sub = options.getSubcommand();
 
@@ -184,12 +191,12 @@ export default commandModule({
           title = 'List of all weapons in the game';
           description = weapons.map((w) => w.weapon_name).join('\n');
         }
-        if (description.length < 1) {
+        if (filteredWeapons.length < 1) {
           description = 'No weapons were found matching your query.';
         }
         const listDisplay = displayData({
           user: ctx.user,
-          title,
+          title: filteredWeapons.length < 1 ? '' : title,
           description
         });
 
@@ -225,10 +232,20 @@ export default commandModule({
               name: 'Ammounition Type',
               value: currentWeapon.weapon_rounds_type,
               inline: false
+            },
+            {
+              name: 'Stats:',
+              value: currentWeapon.base_stat
+                .map((stat) => {
+                  const st = base_stats.find((s) => s.stat_id === stat.stat_id);
+                  return `${st?.stat_name}: ${stat.stat_value}`;
+                })
+                .join('\n'),
+              inline: true
             }
           ]
+          // thumbnail: `${currentWeapon.base_stat}`
         });
-        console.log(weaponDisplay);
         return await ctx.reply({
           ephemeral: true,
           embeds: [weaponDisplay]
