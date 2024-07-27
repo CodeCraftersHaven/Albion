@@ -1,10 +1,10 @@
-import { commandModule, CommandType } from '@sern/handler';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } from 'discord.js';
+import {commandModule, CommandType, SlashCommand} from '@sern/handler';
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder} from 'discord.js';
 
 export default commandModule({
   type: CommandType.Slash,
   description: 'Shows bot info.',
-  execute: async ({ interaction }) => {
+  execute: async ({interaction}) => {
     return await interaction.reply({
       embeds: [
         new EmbedBuilder({
@@ -30,10 +30,15 @@ export default commandModule({
               style: ButtonStyle.Link,
               label: 'Privacy Policy',
               url: 'https://cc-haven.net/bot-privacy'
+            }),
+            new ButtonBuilder({
+              style: ButtonStyle.Link,
+              label: 'Support Server',
+              url: 'https://cc-haven.net/discord'
             })
           ]
         })
       ]
     });
   }
-});
+}) as SlashCommand;
