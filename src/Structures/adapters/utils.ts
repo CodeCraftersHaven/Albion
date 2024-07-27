@@ -1,12 +1,15 @@
 import {
+  ActionRowBuilder,
   AttachmentBuilder,
   AuditLogEvent,
   Colors,
   EmbedBuilder,
   EmbedField,
   Guild,
+  ModalBuilder,
   PermissionResolvable,
   PermissionsBitField,
+  TextInputBuilder,
   User
 } from 'discord.js';
 import path from 'path';
@@ -160,4 +163,28 @@ export const leaveEmbed = async (guild: Guild) => {
       },
     ]
   })
+}
+
+export function createModal(
+  id: string,
+  title: string,
+  components: TextInputBuilder[]
+) {
+  const rows: ActionRowBuilder<TextInputBuilder>[] = components.map((field) => {
+      return new ActionRowBuilder<TextInputBuilder>({
+          components: [field],
+      });
+  });
+  return new ModalBuilder({
+      custom_id: id.toString(),
+      title: capitalise(title).toString(),
+      components: rows,
+  });
+}
+
+export function capitalise(string: string) {
+	return string
+		.split(' ')
+		.map((str) => str.slice(0, 1).toUpperCase() + str.slice(1))
+		.join(' ');
 }
