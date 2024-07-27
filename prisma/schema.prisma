@@ -19,3 +19,10 @@ model UserProfile {
   ouid      String
   updatedAt DateTime @updatedAt
 }
+
+model RecommendedSetups {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  descendantId      String
+  descendantName    String
+  descendantModules Json
+}
