@@ -22,7 +22,7 @@
     "dev": "nodemon .",
     "node": "node .",
     "pm2-start": "pm2 start ecosystem.config.cjs",
-    "pm2-restart": "pm2 restart 'Albion Guide'",
+    "pm2-restart": "pm2 restart AlbionGuide",
     "gen": "npx prisma generate",
     "commands:publish": "sern commands publish -W",
     "commands:delete": "sern commands clear -y"

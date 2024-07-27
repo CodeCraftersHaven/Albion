@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: 'Albion Guide',
+      name: 'AlbionGuide',
       script: 'dist/index.js',
-      watch: ['dist'],
+      watch: ['./dist'],
       ignore_watch: ['node_modules', '.sern', 'src', 'prisma']
     }
   ]
