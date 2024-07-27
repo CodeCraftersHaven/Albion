@@ -171,10 +171,10 @@ interface Weapon {
 export type GlobalWeaponData = Weapon[];
 
 //Global Descendant Data
-interface StatDetail {
+type StatDetail = {
   stat_type: string;
   stat_value: number;
-}
+}[]
 
 interface DescendantSkill {
   skill_type: string;
@@ -191,7 +191,7 @@ interface Descendant {
   descendant_image_url: string;
   descendant_stat: {
     level: number;
-    stat_detail: StatDetail[];
+    stat_detail: StatDetail;
   }[];
   descendant_skill: DescendantSkill[];
 }
@@ -359,3 +359,54 @@ export const imgs = {
   xbox: 'https://www.freeiconspng.com/uploads/xbox-icon-2.png',
   psn: 'https://cdn.freebiesupply.com/logos/large/2x/playstation-3-logo-black-and-white.png'
 };
+
+//ui buttons data
+export interface DescendantData {
+  descendant_id: string;
+  descendant_name: string;
+  descendant_image_url: string;
+  descendant_stat: {
+    level: number;
+    stat_detail: StatDetail;
+  } | null;
+  descendant_skill: {
+    skill_type: string;
+    skill_name: string;
+    element_type: string;
+    arche_type: string;
+    skill_image_url: string;
+    skill_description: string;
+  }[];
+  descendant_modules: {
+    capacity: string;
+    equipped_modules: {
+      slot: string;
+      id: string;
+      name: string;
+    }[];
+  };
+};
+
+export interface WeaponData {
+  weapon_id: string,
+  weapon_name: string,
+  weapon_image_url: string,
+  weapon_type: string,
+  weapon_rounds_type: string,
+  weapon_tier: string,
+  weapon_level: number,
+  weapon_firearm_atk: number
+}
+
+export interface ReactorData {
+  reactor_id: string,
+              reactor_name: string,
+              reactor_image_url: string,
+              reactor_stats: {
+                level: number,
+                skill_atk_power: number,
+                sub_skill_atk_power: number,
+                enchant_effect: EnchantEffect[],
+                skill_power_coefficient: CoefficientStat[]
+              }
+}
