@@ -1,4 +1,4 @@
-import { commandModule, CommandType } from '@sern/handler';
+import {commandModule, CommandType} from '@sern/handler';
 import {
   ActionRowBuilder,
   ApplicationCommandOptionType,
@@ -7,13 +7,16 @@ import {
   Colors,
   EmbedBuilder
 } from 'discord.js';
-import { imgs } from '#adapters';
-import { publishConfig } from '@sern/publisher';
+import {Asset, imgs} from '#adapters';
+import {publishConfig} from '@sern/publisher';
+import {ChannelIds} from '#bot';
+
+const IDS = await Asset<ChannelIds>({p: 'config.json', encoding: 'json'});
 
 export default commandModule({
   type: CommandType.Slash,
   description: 'Gives basic info about a given users Descendant profile.',
-  plugins: [publishConfig({ contexts: [0, 1, 2], integrationTypes: ['Guild', 'User'] })],
+  plugins: [publishConfig({contexts: [0, 1, 2], integrationTypes: ['Guild', 'User']})],
   options: [
     {
       type: ApplicationCommandOptionType.String,
@@ -28,7 +31,7 @@ export default commandModule({
       required: false
     }
   ],
-  async execute(ctx, { deps }) {
+  async execute(ctx, {deps}) {
     const [client, TFD] = [deps['@sern/client'], deps.nexon],
       user = ctx.options.getString('user-tag', true),
       eph = ctx.options.getBoolean('invisible-reply'),
@@ -48,14 +51,14 @@ export default commandModule({
         ephemeral: true
       });
     } else {
-      const { descendant, titles } = meta;
+      const {descendant, titles} = meta;
       if (typeof profile === 'string') {
         return await ctx.reply({
           content: profile,
           ephemeral: true
         });
       } else {
-        const { basic: uB, descendant: uDes } = profile;
+        const {basic: uB, descendant: uDes} = profile;
         let icon_url = '';
         switch (uB.platform_type) {
           case 'Steam':
@@ -68,8 +71,8 @@ export default commandModule({
             icon_url = imgs.psn;
             break;
         }
-        const pre = titles.find((t) => t.title_id === uB.title_prefix_id)?.title_name;
-        const suf = titles.find((t) => t.title_id === uB.title_suffix_id)?.title_name;
+        const pre = titles.find(t => t.title_id === uB.title_prefix_id)?.title_name;
+        const suf = titles.find(t => t.title_id === uB.title_suffix_id)?.title_name;
         let title = '';
         if (pre && suf) {
           title += `${pre} ${suf}`;
@@ -106,14 +109,14 @@ export default commandModule({
                   text: `${client.user!.username}`,
                   icon_url: client.user!.avatarURL() ?? undefined
                 },
-                thumbnail: { url: icon_url },
+                thumbnail: {url: icon_url},
                 timestamp: Date.now()
               })
             ],
             ephemeral
           });
         }
-        const des = descendant.find((d) => d.descendant_id === uDes.descendant_id);
+        const des = descendant.find(d => d.descendant_id === uDes.descendant_id);
 
         if (!des) {
           return await ctx.reply({
@@ -128,8 +131,7 @@ export default commandModule({
             },
             color: Colors.Green,
             title: title + ` ${des.descendant_name}`,
-            thumbnail: { url: des.descendant_image_url },
-            description: 'Buttons will be available after development is complete.',
+            thumbnail: {url: des.descendant_image_url},
             fields: [
               {
                 name: 'First played on:',
@@ -157,18 +159,23 @@ export default commandModule({
 
           return await ctx.reply({
             embeds: [userInfo],
-            components: [
-              new ActionRowBuilder<ButtonBuilder>({
-                components: ['Descendant', 'Weapons', 'Reactor', 'External Components', 'Complete'].map((choice) => {
-                  return new ButtonBuilder({
-                    custom_id: `ui/${choice.replace(' ', '-').toLowerCase()}`,
-                    label: choice,
-                    style: ButtonStyle.Primary,
-                    disabled: true
-                  });
-                })
-              })
-            ],
+            //Will be available globally after buttons are finished!
+            components:
+              ctx.guildId === IDS.main_guild_id && ctx.channelId === IDS.channel_ids.testing
+                ? [
+                    new ActionRowBuilder<ButtonBuilder>({
+                      components: ['Descendant', 'Weapons', 'Reactor', 'External Components', 'Complete'].map(
+                        choice => {
+                          return new ButtonBuilder({
+                            custom_id: `ui/${choice.replace(' ', '-').toLowerCase()}`,
+                            label: choice,
+                            style: ButtonStyle.Primary
+                          });
+                        }
+                      )
+                    })
+                  ]
+                : [],
             ephemeral
           });
         }
