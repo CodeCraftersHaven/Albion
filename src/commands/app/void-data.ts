@@ -1,7 +1,7 @@
 import { displayData } from '#adapters';
-import { commandModule, CommandType, Service } from '@sern/handler';
+import { commandModule, CommandType } from '@sern/handler';
 import { publishConfig } from '@sern/publisher';
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 export default commandModule({
   type: CommandType.Slash,
@@ -21,13 +21,13 @@ export default commandModule({
       autocomplete: true,
       command: {
         onEvent: [],
-        execute: async (auto) => {
-          const descendants = Service('nexon').getMetadata()!.descendant;
+        execute: async (auto, { deps }) => {
+          const { descendant: descendants } = deps.nexon.getMetadata()!;
           const focusedOption = auto.options.getFocused().toLowerCase();
 
           const filter = descendants
-            .filter((d) => d.descendant_name.toLowerCase().startsWith(focusedOption))
-            .map((type) => ({ name: type.descendant_name, value: type.descendant_id }));
+            .filter(d => d.descendant_name.toLowerCase().startsWith(focusedOption))
+            .map(type => ({ name: type.descendant_name, value: type.descendant_id }));
 
           await auto.respond(filter.slice(0, 25));
         }
@@ -41,13 +41,13 @@ export default commandModule({
       autocomplete: true,
       command: {
         onEvent: [],
-        execute: async (auto) => {
-          const weapons = Service('nexon').getMetadata()!.weapon;
+        execute: async (auto, { deps }) => {
+          const { weapon: weapons } = deps.nexon.getMetadata()!;
           const focusedOption = auto.options.getFocused().toLowerCase();
 
           const filter = weapons
-            .filter((w) => w.weapon_name.toLowerCase().startsWith(focusedOption))
-            .map((type) => ({ name: type.weapon_name, value: type.weapon_id }));
+            .filter(w => w.weapon_name.toLowerCase().startsWith(focusedOption))
+            .map(type => ({ name: type.weapon_name, value: type.weapon_id }));
 
           await auto.respond(filter.slice(0, 25));
         }
@@ -61,13 +61,13 @@ export default commandModule({
       autocomplete: true,
       command: {
         onEvent: [],
-        execute: async (auto) => {
-          const voidBattles = Service('nexon').getMetadata()!.voidBattle;
+        execute: async (auto, { deps }) => {
+          const { voidBattle: voidBattles } = deps.nexon.getMetadata()!;
           const focusedOption = auto.options.getFocused().toLowerCase();
 
           const filter = voidBattles
-            .filter((v) => v.void_battle_name.toLowerCase().startsWith(focusedOption))
-            .map((type) => ({ name: type.void_battle_name, value: type.void_battle_id }));
+            .filter(v => v.void_battle_name.toLowerCase().startsWith(focusedOption))
+            .map(type => ({ name: type.void_battle_name, value: type.void_battle_id }));
 
           await auto.respond(filter.slice(0, 25));
         }
@@ -107,19 +107,19 @@ export default commandModule({
       const { getMetadata, moduleRecommendation } = deps.nexon;
       const recommendation = await moduleRecommendation(des, weapon, battle, period);
       const { descendant, weapon: weapons, voidBattle, module } = getMetadata()!;
-      const descendantName = descendant.find((d) => d.descendant_id === des)?.descendant_name;
-      const weaponName = weapons.find((w) => w.weapon_id === weapon)?.weapon_name;
-      const voidBattleName = voidBattle.find((vb) => vb.void_battle_id === battle)?.void_battle_name;
+      const descendantName = descendant.find(d => d.descendant_id === des)?.descendant_name;
+      const weaponName = weapons.find(w => w.weapon_id === weapon)?.weapon_name;
+      const voidBattleName = voidBattle.find(vb => vb.void_battle_id === battle)?.void_battle_name;
       const recommendedDescendantModules = recommendation.descendant.recommendation
-        .map((rec) => {
-          const moduleName = module.find((mod) => mod.module_id === rec.module_id)?.module_name;
+        .map(rec => {
+          const moduleName = module.find(mod => mod.module_id === rec.module_id)?.module_name;
           return moduleName ? moduleName : `Module ID: ${rec.module_id}`;
         })
         .join('\n');
 
       const recommendedWeaponModules = recommendation.weapon.recommendation
-        .map((rec) => {
-          const moduleName = module.find((mod) => mod.module_id === rec.module_id)?.module_name;
+        .map(rec => {
+          const moduleName = module.find(mod => mod.module_id === rec.module_id)?.module_name;
           return moduleName ? moduleName : `Module ID: ${rec.module_id}`;
         })
         .join('\n');
