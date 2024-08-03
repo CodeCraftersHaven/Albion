@@ -74,7 +74,13 @@ export default commandModule({
           )
           .setTimestamp();
 
-        return { embeds: [embed] };
+        return !ctx.guild
+          ? { embeds: [embed] }
+          : {
+              embeds: [
+                embed.setFooter({ text: 'Requested By: ' + ctx.user.username, iconURL: ctx.user.displayAvatarURL() })
+              ]
+            };
       },
       remove: async (): Promise<string> => {
         const found = await profile.findFirst({ where: { discordUserId: ctx.userId } });
