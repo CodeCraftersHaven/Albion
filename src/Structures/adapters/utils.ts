@@ -9,6 +9,8 @@ import {
   ModalBuilder,
   PermissionResolvable,
   PermissionsBitField,
+  Snowflake,
+  SnowflakeUtil,
   TextInputBuilder,
   User
 } from 'discord.js';
@@ -59,7 +61,7 @@ export const owners = env.OWNER_IDS[0].replaceAll(/[\[\]"]/g, '').split(', ');
 export const permsToString = (...perms: PermissionResolvable[]) => {
   return new PermissionsBitField(perms)
     .toArray()
-    .map((perm) => `\`${perm}\``)
+    .map(perm => `\`${perm}\``)
     .join(', ');
 };
 
@@ -124,14 +126,16 @@ export const displayData = (opts: {
 
 export const joinEmbed = async (guild: Guild) => {
   const owner = await guild.fetchOwner();
-  const entry = (await guild.fetchAuditLogs()).entries.filter((e) => e.action === AuditLogEvent.BotAdd).find((e) => e.targetId === '1263202205851193447');
+  const entry = (await guild.fetchAuditLogs()).entries
+    .filter(e => e.action === AuditLogEvent.BotAdd)
+    .find(e => e.targetId === '1263202205851193447');
   return new EmbedBuilder({
     author: {
       name: entry?.executor?.username!,
       icon_url: entry?.executor?.displayAvatarURL() ?? ''
     },
     color: Colors.Blurple,
-    image: {url: guild.banner ? guild.bannerURL()! : ''},
+    image: { url: guild.banner ? guild.bannerURL()! : '' },
     timestamp: entry?.createdAt!,
     description: 'I have been added to a new guild!',
     fields: [
@@ -148,8 +152,8 @@ export const joinEmbed = async (guild: Guild) => {
         value: `[${entry?.executor?.username}](<https://discord.com/users/${entry?.executorId}>) \`(${entry?.executorId})\``
       }
     ]
-  })
-}
+  });
+};
 
 export const leaveEmbed = async (guild: Guild) => {
   return new EmbedBuilder({
@@ -160,31 +164,48 @@ export const leaveEmbed = async (guild: Guild) => {
       {
         name: 'Guild',
         value: `\`${guild.name} (${guild.id})\``
-      },
+      }
     ]
-  })
-}
+  });
+};
 
-export function createModal(
-  id: string,
-  title: string,
-  components: TextInputBuilder[]
-) {
-  const rows: ActionRowBuilder<TextInputBuilder>[] = components.map((field) => {
-      return new ActionRowBuilder<TextInputBuilder>({
-          components: [field],
-      });
+export function createModal(id: string, title: string, components: TextInputBuilder[]) {
+  const rows: ActionRowBuilder<TextInputBuilder>[] = components.map(field => {
+    return new ActionRowBuilder<TextInputBuilder>({
+      components: [field]
+    });
   });
   return new ModalBuilder({
-      custom_id: id.toString(),
-      title: capitalise(title).toString(),
-      components: rows,
+    custom_id: id.toString(),
+    title: capitalise(title).toString(),
+    components: rows
   });
 }
 
 export function capitalise(string: string) {
-	return string
-		.split(' ')
-		.map((str) => str.slice(0, 1).toUpperCase() + str.slice(1))
-		.join(' ');
+  return string
+    .split(' ')
+    .map(str => str.slice(0, 1).toUpperCase() + str.slice(1))
+    .join(' ');
+}
+
+export function getId(mention: string): Snowflake | boolean {
+  let id = '';
+  if (mention.includes('@') && !mention.includes('&')) {
+    id = mention.replaceAll(/[<@>]/g, '');
+  }
+  if (mention.includes('#')) {
+    id = mention.replaceAll(/[<#>]/g, '');
+  }
+  if (mention.includes('@&')) {
+    id = mention.replaceAll(/[<@&>]/g, '');
+  }
+
+  return isValidSnowflake(id) ? id : false;
+}
+
+export function isValidSnowflake(id: Snowflake): boolean {
+  // Discord Epoch (January 1, 2015) 1420070400000
+  const deconstructed = SnowflakeUtil.deconstruct(id);
+  return deconstructed.timestamp >= 1420070400000 ? true : false;
 }

@@ -16,7 +16,7 @@ model Cooldowns {
 model UserProfile {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   username  String   @unique
-  ouid      String
+  ouid      String   @unique
   updatedAt DateTime @updatedAt
 }
 
@@ -25,4 +25,12 @@ model RecommendedSetups {
   descendantId      String
   descendantName    String
   descendantModules Json
+}
+
+model Profile {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  discordUserId   String @unique
+  discordUsername String
+  username        String
+  ouid            String
 }

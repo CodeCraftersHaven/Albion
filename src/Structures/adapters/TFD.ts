@@ -68,7 +68,7 @@ export class TFD {
     return now.getTime() - updatedAt.getTime() > THIRTY_DAYS;
   }
 
-  public async getOuid(username: string) {
+  public async getOuid(username: string, update = false) {
     const profileName = encodeURIComponent(username);
 
     const res = await this.nexonFetch(`tfd/v1/id?user_name=${profileName}`);
@@ -79,11 +79,14 @@ export class TFD {
 
     const { ouid } = (await res.json()) as UID;
 
-    await this.prisma.upsert({
-      where: { username },
-      update: { ouid: ouid, updatedAt: new Date() },
-      create: { username, ouid: ouid }
-    });
+    if (update) {
+      await this.prisma.upsert({
+        where: { username },
+        update: { ouid: ouid, updatedAt: new Date() },
+        create: { username, ouid: ouid }
+      });
+    }
+
     return ouid;
   }
 
@@ -100,25 +103,25 @@ export class TFD {
 
     if (userProfile) {
       if (await this.shouldUpdateOuid(userProfile.updatedAt)) {
-        ouid = await this.getOuid(username);
+        ouid = await this.getOuid(username, true);
       } else {
         ouid = userProfile.ouid;
       }
     } else {
-      ouid = await this.getOuid(username);
+      ouid = await this.getOuid(username, true);
       if (ouid === 'Invalid username') {
         return ouid;
       }
     }
 
     const endpoints = ['basic', 'descendant', 'weapon', 'reactor', 'external-component'];
-    const requests = endpoints.map(async (endpoint) => {
+    const requests = endpoints.map(async endpoint => {
       let url = `tfd/v1/user/${endpoint}?`;
       if (language && endpoint !== 'basic' && endpoint !== 'descendant') {
         url += `language_code=${encodeURIComponent(language)}&`;
       }
       url += `ouid=${ouid}`;
-      return await this.nexonFetch(url).then((res) => res.json());
+      return await this.nexonFetch(url).then(res => res.json());
     });
 
     const [basic, descendant, weapon, reactor, externalComponent] = await Promise.all(requests);
@@ -168,9 +171,9 @@ export class TFD {
       'void-battle',
       'title'
     ];
-    const requests = endpoints.map(async (endpoint) => {
+    const requests = endpoints.map(async endpoint => {
       const url = `static/tfd/meta/${encodeURIComponent('en')}/${encodeURIComponent(endpoint)}.json`;
-      return await this.nexonFetch(url).then(async (res) => {
+      return await this.nexonFetch(url).then(async res => {
         if (!res.ok) {
           throw new Error(`Failed to fetch metadata for ${endpoint}`);
         }
