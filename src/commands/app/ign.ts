@@ -1,7 +1,7 @@
 import { commandModule, CommandType } from '@sern/handler';
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { publishConfig } from '#sern';
-import { isValidSnowflake } from '#adapters';
+import { isValidSnowflake, owners } from '#adapters';
 
 export default commandModule({
   type: CommandType.Slash,
@@ -29,7 +29,15 @@ export default commandModule({
     {
       name: 'remove',
       description: 'Remove your in-game tag from my memory.',
-      type: ApplicationCommandOptionType.Subcommand
+      type: ApplicationCommandOptionType.Subcommand,
+      options: [
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'user_id',
+          description: 'Provide the discord users id. None = you.',
+          required: false
+        }
+      ]
     },
     {
       name: 'get',
@@ -83,15 +91,24 @@ export default commandModule({
             };
       },
       remove: async (): Promise<string> => {
-        const found = await profile.findFirst({ where: { discordUserId: ctx.userId } });
-        if (!found) return 'You are not in my memory;';
-        await profile.delete({ where: { id: found.id } });
-        return 'You have been removed from my memory!';
+        const _user_ = options.getString('user_id');
+        if (!owners.includes(ctx.userId) && _user_) {
+          return 'Option: `userId` is only available to bot owner!';
+        }
+        let _found = await profile.findFirst({ where: { discordUserId: ctx.userId } });
+        if (owners.includes(ctx.userId) && _user_) {
+          _found = await profile.findFirst({ where: { discordUserId: _user_ } });
+        }
+        if (!_found) return _user_ ? 'That user is not in my memory.' : 'You are not in my memory.';
+        await profile.delete({ where: { id: _found.id } });
+        return _user_ ? 'User has been removed from my memory.' : 'You have been removed from my memory!';
       },
       set: async (): Promise<string> => {
         const tag = options.getString('user-tag', true);
         const ouid = await game.getOuid(tag);
-        if (ouid === 'Invalid username') return ouid;
+        if (ouid === 'Invalid username!') {
+          return ouid;
+        }
 
         const [p, u] = await Promise.all([
           userProfile.findUnique({ where: { username: tag } }),
