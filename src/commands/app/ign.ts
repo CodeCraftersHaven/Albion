@@ -106,7 +106,7 @@ export default commandModule({
       set: async (): Promise<string> => {
         const tag = options.getString('user-tag', true);
         const ouid = await game.getOuid(tag);
-        if (ouid === 'Invalid username!') {
+        if (ouid.includes('Invalid')) {
           return ouid;
         }
 
