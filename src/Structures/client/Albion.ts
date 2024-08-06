@@ -5,9 +5,15 @@ export class Albion extends Client {
   private actsIndex = 0;
   constructor(private cooldowns: Cooldowns) {
     super({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.DirectMessages
+      ],
       allowedMentions: {
         repliedUser: false
+        // parse: ['everyone']
       },
       shards: 'auto'
     });
@@ -28,10 +34,10 @@ export class Albion extends Client {
       for (const guild of this.guilds.cache.values()) {
         count++;
         const members = await guild.members.fetch();
-        members.forEach((member) => {
+        members.forEach(member => {
           if (!member.user.bot && !uniqueMembers.has(member.user.id)) {
             const isPlayingDescendant = member.presence?.activities.some(
-              (activity) => activity.name === 'The First Descendant'
+              activity => activity.name === 'The First Descendant'
             );
             if (isPlayingDescendant) {
               descendants.add(member.user.id);
@@ -41,19 +47,19 @@ export class Albion extends Client {
         });
       }
 
-      const numberOfDescendants = descendants.size;
-      const numberOfMembers = uniqueMembers.size;
+      const d = descendants.size;
+      const m = uniqueMembers.size;
       let acts = [
         {
-          name: `over ${numberOfDescendants} ${numberOfDescendants === 1 ? 'Descendant' : 'Descendants'}`,
+          name: `over ${d === 1 ? d + ' Descendant' : d + ' Descendants'}`,
           type: ActivityType.Watching
         },
         {
-          name: `over ${numberOfMembers} ${numberOfMembers === 1 ? 'user' : 'users'}`,
+          name: `over ${m === 1 ? m + ' user' : m + ' users'}`,
           type: ActivityType.Watching
         },
         {
-          name: `over ${count} ${count === 1 ? 'server' : 'servers'}`,
+          name: `over ${count === 1 ? count + ' server' : count + ' servers'}`,
           type: ActivityType.Watching
         }
       ];
