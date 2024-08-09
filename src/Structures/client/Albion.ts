@@ -81,5 +81,3 @@ export class Albion extends Client {
     }
   }
 }
-
-export * from './configTypes.js';

@@ -1,9 +1,6 @@
-import { Asset } from '#adapters';
-import { ChannelIds } from '#bot';
+import { ids } from '#adapters';
 import { discordEvent } from '@sern/handler';
 import { Events } from 'discord.js';
-
-const ids = await Asset<ChannelIds>({ p: 'config.json', encoding: 'json' });
 
 export default discordEvent({
   name: Events.GuildMemberAdd,

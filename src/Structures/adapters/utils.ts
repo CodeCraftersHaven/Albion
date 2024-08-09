@@ -17,6 +17,7 @@ import {
 import path from 'path';
 import fs from 'fs/promises';
 import { env } from '#sern';
+import { Service } from '@sern/handler';
 
 export type AssetEncoding = 'attachment' | 'base64' | 'binary' | 'utf8' | 'json';
 type PartialAssetEncoding = Exclude<AssetEncoding, 'attachment' | 'json'>;
@@ -55,6 +56,18 @@ export async function Asset(opts: {
     return fs.readFile(filePath, encoding);
   }
 }
+
+type ChannelIds = {
+  main_guild_id: string;
+  channel_ids: {
+    'emoji-submissions': string;
+    'bot-logs': string;
+    'suggestions': string;
+    'testing': string;
+  };
+};
+
+export const ids = await Asset<ChannelIds>({ p: 'config.json', encoding: 'json' });
 
 export const owners = env.OWNER_IDS[0].replaceAll(/[\[\]"]/g, '').split(', ');
 
@@ -209,3 +222,39 @@ export function isValidSnowflake(id: Snowflake): boolean {
   const deconstructed = SnowflakeUtil.deconstruct(id);
   return deconstructed.timestamp >= 1420070400000 ? true : false;
 }
+/*
+export async function shorten(longUrl: string) {
+  const urlShort = Service('prisma').shortUrls;
+  let _exist = await urlShort.findFirst({ where: {longUrl} });
+  if (_exist) {
+    return _exist.shortUrl;
+  }
+  const res = await fetch(env.UrlDomain, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.UrlAPI}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      long_url,
+      domain: env.UrlDomain,
+      group_guid: env.UrlGroup
+    })
+  });
+  const body = await res.json();
+  let id: string = body?.id!;
+  let { link } = body;
+  id = id.split('/').pop()!;
+  await urlShort.create({
+    data: {
+      longUrl,
+      shortUrl: link,
+      shortCode: id,
+      date: new Date(),
+      uses: 0
+    }
+  });
+  console.log(body);
+  return link;
+}
+*/
