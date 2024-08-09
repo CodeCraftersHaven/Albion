@@ -13,7 +13,6 @@ export class Albion extends Client {
       ],
       allowedMentions: {
         repliedUser: false
-        // parse: ['everyone']
       },
       shards: 'auto'
     });
