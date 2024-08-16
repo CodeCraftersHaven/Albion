@@ -1,0 +1,9 @@
+/node_modules
+/dist
+.env
+assets/logs.txt
+.sern
+pnpm-lock.yaml
+src/Structures/sern/plugins/publishConfig.ts
+assets/config.json
+assets/loggerLogs.txt

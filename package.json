@@ -1,0 +1,63 @@
+{
+  "name": "albion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Discord App to get information about games and basic in-game user data made by © NEXON Korea Corp. & NEXON Games Co, LTD.",
+  "main": "dist/index.js",
+  "author": {
+    "name": "Peter-MJ-Parker",
+    "url": "https://github.com/Peter-MJ-Parker"
+  },
+  "maintainers": [
+    {
+      "name": "notsomarv",
+      "url": "https://discord.com/users/371759410009341952"
+    },
+    {
+      "name": "glitchy",
+      "url": "https://discord.com/users/342314924804014081"
+    }
+  ],
+  "contributors": [
+    "null"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && sern build",
+    "dev": "nodemon .",
+    "node": "node .",
+    "gen": "npx prisma generate",
+    "commands:publish": "sern commands publish -W",
+    "commands:delete": "sern commands clear -y"
+  },
+  "keywords": [
+    "typescript",
+    "sern",
+    "discord.js"
+  ],
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.53",
+    "@prisma/client": "5.17.0",
+    "@sern/handler": "^4.0.2",
+    "@sern/publisher": "^1.1.2",
+    "@spark.ts/logger": "^1.4.0",
+    "colorette": "^2.0.20",
+    "discord.js": "14.15.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "prisma": "^5.17.0",
+    "typescript": "^5.5.4"
+  },
+  "imports": {
+    "#sern": [
+      "./dist/Structures/sern/sIndex.js"
+    ],
+    "#bot": [
+      "./dist/Structures/client/Albion.js"
+    ],
+    "#adapters": [
+      "./dist/Structures/adapters/aIndex.js"
+    ]
+  },
+  "type": "module"
+}

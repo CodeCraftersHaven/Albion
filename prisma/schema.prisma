@@ -1,0 +1,36 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Cooldowns {
+  id      String   @id @map("_id")
+  expires DateTime
+  count   Int
+}
+
+model UserProfile {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  username  String   @unique
+  ouid      String   @unique
+  updatedAt DateTime @updatedAt
+}
+
+model RecommendedSetups {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  descendantId      String
+  descendantName    String
+  descendantModules Json
+}
+
+model Profile {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  discordUserId   String @unique
+  discordUsername String
+  username        String
+  ouid            String
+}
