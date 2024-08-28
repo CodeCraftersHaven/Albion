@@ -21,8 +21,6 @@
 1.) Rename Files:
 
     .env.example -> .env
-    /assets/logs.txt.example -> /assets/logs.txt
-    /assets/loggerLogs.txt.example -> /assets/loggerLogs.txt
     /assets/config.json.example -> /assets/config.json (fill this in!)
 
 2.) Fill in required keys. Example:

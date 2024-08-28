@@ -1,14 +1,11 @@
-import { discordEvent, Service } from '@sern/handler';
-import { Events, InteractionType } from 'discord.js';
-import { appendFile } from 'fs';
-import { promisify } from 'util';
+import { ids } from '#adapters';
+import { discordEvent, Services } from '@sern/handler';
+import { Events, InteractionType, TextChannel } from 'discord.js';
 
 export default discordEvent({
   name: Events.InteractionCreate,
-  execute: async (interaction) => {
-    const logger = Service('@sern/logger');
-    const appendFileAsync = promisify(appendFile);
-    const client = interaction.client;
+  execute: async interaction => {
+    const [client, logger] = Services('@sern/client', '@sern/logger');
     let entry = '';
 
     if (interaction.inGuild()) {
@@ -38,10 +35,16 @@ export default discordEvent({
       entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
     entry += ` at ${new Date().toLocaleString()}\n`;
+    const mainGuild = client.guilds.cache.get(ids.main_guild_id);
+    if (!mainGuild) return;
+    let logsChannel: TextChannel | null = null;
+    if (!logsChannel) return;
     try {
-      await appendFileAsync('assets/logs.txt', entry);
-    } catch (error) {
-      logger.info('Error while writing to log file: ' + error);
+      logsChannel = (await mainGuild?.channels.fetch())?.get(ids.channel_ids['bot-logs']) as TextChannel;
+      await logsChannel.send(entry);
+    } catch (error: any) {
+      logger.error(error);
+      await logsChannel.send(error.message);
     }
   }
 });
