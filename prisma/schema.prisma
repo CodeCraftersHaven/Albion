@@ -36,5 +36,6 @@ model Profile {
 }
 
 model InteractionLogger {
-  id String @id @map("_id")
+  id        String @id @map("_id")
+  messageId String
 }
