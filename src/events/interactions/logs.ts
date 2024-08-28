@@ -1,6 +1,7 @@
 import { ids } from '#adapters';
+import { PrismaClient } from '@prisma/client';
 import { discordEvent, Services } from '@sern/handler';
-import { Events, InteractionType, TextChannel } from 'discord.js';
+import { ChannelType, Events, InteractionType, Message, TextChannel } from 'discord.js';
 
 const MAX_MESSAGE_LENGTH = 2000;
 const CODE_BLOCK_CHARS = 7;
@@ -8,7 +9,7 @@ const CODE_BLOCK_CHARS = 7;
 export default discordEvent({
   name: Events.InteractionCreate,
   execute: async interaction => {
-    const [client, logger] = Services('@sern/client', '@sern/logger');
+    const [client, logger, prisma] = Services('@sern/client', '@sern/logger', 'prisma');
     let entry = '';
 
     if (interaction.inGuild()) {
@@ -47,23 +48,33 @@ export default discordEvent({
     const mainGuild = client.guilds.cache.get(ids.main_guild_id);
     if (!mainGuild) return;
 
+    let db = await prisma.interactionLogger.findFirst({
+      where: {
+        id: mainGuild.id
+      }
+    });
+
     let logsChannel: TextChannel | null = null;
     try {
-      logsChannel = (await mainGuild?.channels.fetch())?.get(ids.channel_ids['bot-logs']) as TextChannel;
+      logsChannel = (await mainGuild.channels.fetch())
+        .filter(c => c!.type === ChannelType.GuildText)
+        .get(ids.channel_ids['bot-logs']) as TextChannel;
       if (!logsChannel) return;
 
-      const messages = await logsChannel.messages.fetch({ limit: 1 });
-      const lastMessage = messages.first();
+      let lastMessage: Message | null = null;
+      if (db?.messageId) {
+        lastMessage = await logsChannel.messages.fetch(db.messageId).catch(() => null);
+      }
 
-      if (lastMessage && lastMessage.author.id === client.user?.id && lastMessage.content.startsWith('```ts\n')) {
+      if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts\n')) {
         const currentContent = lastMessage.content.slice(5, -3);
         if (currentContent.length + entry.length + CODE_BLOCK_CHARS <= MAX_MESSAGE_LENGTH) {
           await lastMessage.edit('```ts\n' + currentContent + entry + '```');
         } else {
-          await logsChannel.send('```ts\n' + entry + '```');
+          await sendNewMessage(logsChannel, entry, prisma, mainGuild.id);
         }
       } else {
-        await logsChannel.send('```ts\n' + entry + '```');
+        await sendNewMessage(logsChannel, entry, prisma, mainGuild.id);
       }
     } catch (error: any) {
       logger.error(error);
@@ -73,3 +84,18 @@ export default discordEvent({
     }
   }
 });
+async function sendNewMessage(channel: TextChannel, entry: string, prisma: PrismaClient, guildId: string) {
+  const message = await channel.send('```ts\n' + entry + '```');
+  await prisma.interactionLogger.upsert({
+    where: {
+      id: guildId
+    },
+    create: {
+      id: guildId,
+      messageId: message.id
+    },
+    update: {
+      messageId: message.id
+    }
+  });
+}

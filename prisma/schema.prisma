@@ -34,3 +34,7 @@ model Profile {
   username        String
   ouid            String
 }
+
+model InteractionLogger {
+  id String @id @map("_id")
+}
