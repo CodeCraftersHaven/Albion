@@ -3,9 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { discordEvent, Services } from '@sern/handler';
 import { ChannelType, Events, InteractionType, Message, TextChannel } from 'discord.js';
 
-const MAX_MESSAGE_LENGTH = 2000;
-const CODE_BLOCK_CHARS = 7;
-
 export default discordEvent({
   name: Events.InteractionCreate,
   execute: async interaction => {
@@ -68,7 +65,9 @@ export default discordEvent({
 
       if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts\n')) {
         const currentContent = lastMessage.content.slice(5, -3);
-        if (currentContent.length + entry.length + CODE_BLOCK_CHARS <= MAX_MESSAGE_LENGTH) {
+        const newContent = currentContent + entry;
+
+        if (newContent.length + 7 <= 2000) {
           await lastMessage.edit('```ts\n' + currentContent + entry + '```');
         } else {
           await sendNewMessage(logsChannel, entry, prisma, mainGuild.id);
