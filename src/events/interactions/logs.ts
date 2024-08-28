@@ -38,7 +38,10 @@ export default discordEvent({
     if (interaction.isContextMenuCommand()) {
       entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
-    entry += ` at ${new Date().toLocaleString()}\n`;
+    entry += ` at ${new Date().toLocaleString('en-US', {
+      dateStyle: 'short',
+      timeStyle: 'medium'
+    })}\n`;
 
     const mainGuild = client.guilds.cache.get(ids.main_guild_id);
     if (!mainGuild) return;
