@@ -39,6 +39,7 @@ export default discordEvent({
       entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
     }
     entry += ` at ${new Date().toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
       dateStyle: 'short',
       timeStyle: 'medium'
     })}\n`;
@@ -55,7 +56,7 @@ export default discordEvent({
       const lastMessage = messages.first();
 
       if (lastMessage && lastMessage.author.id === client.user?.id && lastMessage.content.startsWith('```ts\n')) {
-        const currentContent = lastMessage.content.slice(5, -3); // Remove ```ts\n and ```
+        const currentContent = lastMessage.content.slice(5, -3);
         if (currentContent.length + entry.length + CODE_BLOCK_CHARS <= MAX_MESSAGE_LENGTH) {
           await lastMessage.edit('```ts\n' + currentContent + entry + '```');
         } else {
