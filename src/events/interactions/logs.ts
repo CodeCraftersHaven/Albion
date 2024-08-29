@@ -1,46 +1,55 @@
 import { ids } from '#adapters';
-import { PrismaClient } from '@prisma/client';
 import { discordEvent, Services } from '@sern/handler';
-import { ChannelType, Events, InteractionType, Message, TextChannel } from 'discord.js';
+import { ChannelType, Events, InteractionType, TextChannel } from 'discord.js';
 
 export default discordEvent({
   name: Events.InteractionCreate,
   execute: async interaction => {
     const [client, logger, prisma] = Services('@sern/client', '@sern/logger', 'prisma');
-    let entry = '';
+    const newEntry = () => {
+      let entry = '';
 
-    if (interaction.inGuild()) {
-      const guild = client.guilds.cache.get(interaction.guildId);
-      if (guild) {
-        entry += `[${guild.name}] - `;
+      if (interaction.inGuild()) {
+        const guild = client.guilds.cache.get(interaction.guildId);
+        if (guild) {
+          entry = `[${guild.name}] - `;
+        } else {
+          entry = `[User Installed Interaction] - `;
+        }
       } else {
-        entry += `[User Installed Interaction] - `;
+        entry = `[DMs] - `;
       }
-    } else {
-      entry += `[DMs] - `;
-    }
 
-    if (interaction.type === InteractionType.ApplicationCommandAutocomplete) return;
-    if (interaction.isCommand()) {
-      entry += `Command: ${interaction.commandName} was used by ${interaction.user.username}`;
-    }
-    if (interaction.isAnySelectMenu()) {
-      entry += `SelectMenu: ${interaction.customId} was used by ${interaction.user.username}`;
-    }
-    if (interaction.isButton()) {
-      entry += `Button: ${interaction.customId} was used by ${interaction.user.username}`;
-    }
-    if (interaction.isModalSubmit()) {
-      entry += `Modal: ${interaction.customId} was submitted by ${interaction.user.username}`;
-    }
-    if (interaction.isContextMenuCommand()) {
-      entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
-    }
-    entry += ` at ${new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      dateStyle: 'short',
-      timeStyle: 'medium'
-    })}\n`;
+      if (interaction.type === InteractionType.ApplicationCommandAutocomplete) return '';
+      if (interaction.isCommand()) {
+        entry += `Command: ${interaction.commandName} was used by ${interaction.user.username}`;
+      }
+      if (interaction.isAnySelectMenu()) {
+        entry += `Select Menu: ${interaction.customId} was used by ${interaction.user.username}`;
+      }
+      if (interaction.isButton()) {
+        entry += `Button: ${interaction.customId} was used by ${interaction.user.username}`;
+      }
+      if (interaction.isModalSubmit()) {
+        entry += `Modal: ${interaction.customId} was submitted by ${interaction.user.username}`;
+      }
+      if (interaction.isContextMenuCommand()) {
+        entry += `Context Menu Command: ${interaction.commandName} was used by ${interaction.user.username}`;
+      }
+      const now = new Date();
+      const timestampString = now.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      entry += ` at ${timestampString.replace('at ', '')} CDT`;
+      return entry;
+    };
 
     const mainGuild = client.guilds.cache.get(ids.main_guild_id);
     if (!mainGuild) return;
@@ -50,6 +59,23 @@ export default discordEvent({
         id: mainGuild.id
       }
     });
+    const sendNewMessage = async (channel: TextChannel) => {
+      const entry = newEntry();
+      const message = await channel.send(`\`\`\`ts\n${entry}\`\`\``);
+      await prisma.interactionLogger.upsert({
+        where: {
+          id: channel.guildId
+        },
+        create: {
+          id: channel.guildId,
+          messageId: message.id
+        },
+        update: {
+          messageId: message.id
+        }
+      });
+      return message;
+    };
 
     let logsChannel: TextChannel | null = null;
     try {
@@ -57,44 +83,36 @@ export default discordEvent({
         .filter(c => c!.type === ChannelType.GuildText)
         .get(ids.channel_ids['bot-logs']) as TextChannel;
       if (!logsChannel) return;
+      if (!db || !db.messageId) {
+        return await sendNewMessage(logsChannel);
+      }
+      let lastMessage = (await logsChannel.messages.fetch({ cache: false })).get(db.messageId);
 
-      let lastMessage: Message | null = null;
-      if (db?.messageId) {
-        lastMessage = await logsChannel.messages.fetch(db.messageId).catch(() => null);
+      if (!lastMessage) {
+        return await sendNewMessage(logsChannel);
       }
 
-      if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts\n')) {
-        const currentContent = lastMessage.content.slice(5, -3);
-        const newContent = currentContent + entry;
+      if (lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts')) {
+        const currentContent = lastMessage.content.slice(6, -3);
+        const newLogEntry = newEntry();
 
-        if (newContent.length + 7 <= 2000) {
-          await lastMessage.edit('```ts\n' + currentContent + entry + '```');
+        const newContent = `${currentContent}\n${newLogEntry}`.trim();
+
+        if (newContent.length + 9 <= 2000) {
+          await lastMessage.edit(`\`\`\`ts\n${newContent}\`\`\``);
         } else {
-          await sendNewMessage(logsChannel, entry, prisma, mainGuild.id);
+          await sendNewMessage(logsChannel);
         }
-      } else {
-        await sendNewMessage(logsChannel, entry, prisma, mainGuild.id);
       }
     } catch (error: any) {
       logger.error(error);
       if (logsChannel) {
-        await logsChannel.send(error.message);
+        if (error.message === 'Unknown Message') {
+          await sendNewMessage(logsChannel);
+        } else {
+          await logsChannel.send(error.message);
+        }
       }
     }
   }
 });
-async function sendNewMessage(channel: TextChannel, entry: string, prisma: PrismaClient, guildId: string) {
-  const message = await channel.send('```ts\n' + entry + '```');
-  await prisma.interactionLogger.upsert({
-    where: {
-      id: guildId
-    },
-    create: {
-      id: guildId,
-      messageId: message.id
-    },
-    update: {
-      messageId: message.id
-    }
-  });
-}
