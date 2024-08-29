@@ -1,11 +1,13 @@
 import { ids } from '#adapters';
 import { discordEvent, Services } from '@sern/handler';
 import { ChannelType, Events, InteractionType, TextChannel } from 'discord.js';
+const _cache: Map<number, string> = new Map();
 
 export default discordEvent({
   name: Events.InteractionCreate,
   execute: async interaction => {
     const [client, logger, prisma] = Services('@sern/client', '@sern/logger', 'prisma');
+
     const newEntry = () => {
       let entry = '';
 
@@ -51,66 +53,73 @@ export default discordEvent({
       return entry;
     };
 
-    const mainGuild = client.guilds.cache.get(ids.main_guild_id);
-    if (!mainGuild) return;
+    const newLogEntry = newEntry();
+    if (newLogEntry) {
+      const timestamp = Date.now(); // Use timestamp as a unique key
+      _cache.set(timestamp, newLogEntry);
+    }
 
-    let db = await prisma.interactionLogger.findFirst({
-      where: {
-        id: mainGuild.id
-      }
-    });
-    const sendNewMessage = async (channel: TextChannel) => {
-      const entry = newEntry();
-      const message = await channel.send(`\`\`\`ts\n${entry}\`\`\``);
-      await prisma.interactionLogger.upsert({
+    if (_cache.size > 4) {
+      const mainGuild = client.guilds.cache.get(ids.main_guild_id);
+      if (!mainGuild) return;
+
+      let db = await prisma.interactionLogger.findFirst({
         where: {
-          id: channel.guildId
-        },
-        create: {
-          id: channel.guildId,
-          messageId: message.id
-        },
-        update: {
-          messageId: message.id
+          id: mainGuild.id
         }
       });
-      return message;
-    };
+      const sendNewMessage = async (channel: TextChannel) => {
+        const messageContent = Array.from(_cache.values()).join('\n');
+        const message = await channel.send(`\`\`\`ts\n${messageContent}\`\`\``);
 
-    let logsChannel: TextChannel | null = null;
-    try {
-      logsChannel = (await mainGuild.channels.fetch())
-        .filter(c => c!.type === ChannelType.GuildText)
-        .get(ids.channel_ids['bot-logs']) as TextChannel;
-      if (!logsChannel) return;
-      if (!db || !db.messageId) {
-        return await sendNewMessage(logsChannel);
-      }
-      let lastMessage = (await logsChannel.messages.fetch({ cache: false })).get(db.messageId);
+        await prisma.interactionLogger.upsert({
+          where: {
+            id: channel.guildId
+          },
+          create: {
+            id: channel.guildId,
+            messageId: message.id
+          },
+          update: {
+            messageId: message.id
+          }
+        });
+        _cache.clear();
+        return message;
+      };
 
-      if (!lastMessage) {
-        return await sendNewMessage(logsChannel);
-      }
+      let logsChannel: TextChannel | null = null;
+      try {
+        logsChannel = (await mainGuild.channels.fetch())
+          .filter(c => c!.type === ChannelType.GuildText)
+          .get(ids.channel_ids['bot-logs']) as TextChannel;
+        if (!logsChannel) return;
+        if (!db || !db.messageId) {
+          return await sendNewMessage(logsChannel);
+        }
+        let lastMessage = (await logsChannel.messages.fetch({ cache: false })).get(db.messageId);
 
-      if (lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts')) {
-        const currentContent = lastMessage.content.slice(6, -3);
-        const newLogEntry = newEntry();
+        if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts')) {
+          const currentContent = lastMessage.content.slice(6, -3);
+          const newContent = `${currentContent}\n${Array.from(_cache.values()).join('\n')}`.trim();
 
-        const newContent = `${currentContent}\n${newLogEntry}`.trim();
-
-        if (newContent.length + 9 <= 2000) {
-          await lastMessage.edit(`\`\`\`ts\n${newContent}\`\`\``);
+          if (newContent.length + 9 <= 2000) {
+            await lastMessage.edit(`\`\`\`ts\n${newContent}\`\`\``);
+          } else {
+            await sendNewMessage(logsChannel);
+          }
+          _cache.clear();
         } else {
           await sendNewMessage(logsChannel);
         }
-      }
-    } catch (error: any) {
-      logger.error(error);
-      if (logsChannel) {
-        if (error.message === 'Unknown Message') {
-          await sendNewMessage(logsChannel);
-        } else {
-          await logsChannel.send(error.message);
+      } catch (error: any) {
+        logger.error(error);
+        if (logsChannel) {
+          if (error.message === 'Unknown Message') {
+            await sendNewMessage(logsChannel);
+          } else {
+            await logsChannel.send(error.message);
+          }
         }
       }
     }
