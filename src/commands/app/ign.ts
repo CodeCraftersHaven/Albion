@@ -1,5 +1,5 @@
 import { commandModule, CommandType } from '@sern/handler';
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder, Snowflake } from 'discord.js';
 import { publishConfig } from '#sern';
 import { isValidSnowflake, owners } from '#adapters';
 
@@ -41,13 +41,19 @@ export default commandModule({
     },
     {
       name: 'get',
-      description: 'Retrieves a users in-game tag if available.',
+      description: 'Retrieves a users in-game tag if available by id OR tag.',
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
+          type: ApplicationCommandOptionType.User,
+          name: 'user-tag',
+          description: 'Choose a user. None = you.',
+          required: false
+        },
+        {
           type: ApplicationCommandOptionType.String,
-          name: 'user',
-          description: 'Provide the discord users id. None = you.',
+          name: 'user-id',
+          description: 'Please provide a discord user id. None = you.',
           required: false
         }
       ]
@@ -63,10 +69,19 @@ export default commandModule({
 
     const actions = {
       get: async (): Promise<{ content: string } | { embeds: EmbedBuilder[] }> => {
-        const user = options.getString('user') || ctx.userId;
-        if (!isValidSnowflake(user) && !c.users.cache.get(user)) {
+        const userTag = options.getUser('user-tag');
+        const userId = options.getString('user-id');
+        const user = userTag ? userTag.id : userId ? userId : ctx.user.id;
+
+        if (!isValidSnowflake(user) || !c.users.cache.get(user)) {
           return { content: 'That is an invalid user id!' };
         }
+
+        const isBot = c.users.cache.get(user)?.bot;
+        if (isBot) {
+          return { content: "Bots don't play this game!" };
+        }
+
         const dbUser = await profile.findFirst({ where: { discordUserId: user } });
         if (!dbUser) {
           return { content: 'No info for that user!' };
