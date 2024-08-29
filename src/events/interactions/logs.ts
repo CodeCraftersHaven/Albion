@@ -2,6 +2,7 @@ import { ids } from '#adapters';
 import { discordEvent, Services } from '@sern/handler';
 import { ChannelType, Events, InteractionType, TextChannel } from 'discord.js';
 const _cache: Map<number, string> = new Map();
+let lastUpdateTime = Date.now();
 
 export default discordEvent({
   name: Events.InteractionCreate,
@@ -9,18 +10,11 @@ export default discordEvent({
     const [client, logger, prisma] = Services('@sern/client', '@sern/logger', 'prisma');
 
     const newEntry = () => {
-      let entry = '';
-
-      if (interaction.inGuild()) {
-        const guild = client.guilds.cache.get(interaction.guildId);
-        if (guild) {
-          entry = `[${guild.name}] - `;
-        } else {
-          entry = `[User Installed Interaction] - `;
-        }
-      } else {
-        entry = `[DMs] - `;
-      }
+      let entry = interaction.inGuild()
+        ? client.guilds.cache.get(interaction.guildId)
+          ? `[${client.guilds.cache.get(interaction.guildId)!.name}] - `
+          : `[User Installed Interaction] - `
+        : `[DMs] - `;
 
       if (interaction.type === InteractionType.ApplicationCommandAutocomplete) return '';
       if (interaction.isCommand()) {
@@ -55,11 +49,13 @@ export default discordEvent({
 
     const newLogEntry = newEntry();
     if (newLogEntry) {
-      const timestamp = Date.now(); // Use timestamp as a unique key
+      const timestamp = Date.now();
       _cache.set(timestamp, newLogEntry);
     }
 
-    if (_cache.size > 4) {
+    const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+
+    if (_cache.size > 4 || timeSinceLastUpdate >= 3 * 60 * 1000) {
       const mainGuild = client.guilds.cache.get(ids.main_guild_id);
       if (!mainGuild) return;
 
@@ -85,6 +81,7 @@ export default discordEvent({
           }
         });
         _cache.clear();
+        lastUpdateTime = Date.now();
         return message;
       };
 
@@ -109,6 +106,7 @@ export default discordEvent({
             await sendNewMessage(logsChannel);
           }
           _cache.clear();
+          lastUpdateTime = Date.now();
         } else {
           await sendNewMessage(logsChannel);
         }
