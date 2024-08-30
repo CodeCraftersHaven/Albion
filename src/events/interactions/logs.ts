@@ -1,8 +1,7 @@
 import { ids } from '#adapters';
 import { discordEvent, Services } from '@sern/handler';
-import { ChannelType, Events, InteractionType, TextChannel } from 'discord.js';
+import { ChannelType, Events, InteractionType, Message, TextChannel } from 'discord.js';
 const _cache: Map<number, string> = new Map();
-let lastUpdateTime = Date.now();
 
 export default discordEvent({
   name: Events.InteractionCreate,
@@ -43,7 +42,7 @@ export default discordEvent({
         second: '2-digit',
         hour12: false
       });
-      entry += ` at ${timestampString.replace('at ', '')} CDT`;
+      entry += ` at ${timestampString.replace('at ', '')} CST`;
       return entry;
     };
 
@@ -53,72 +52,74 @@ export default discordEvent({
       _cache.set(timestamp, newLogEntry);
     }
 
-    const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+    const mainGuild = client.guilds.cache.get(ids.main_guild_id);
+    if (!mainGuild) return;
 
-    if (_cache.size > 4 || timeSinceLastUpdate >= 3 * 60 * 1000) {
-      const mainGuild = client.guilds.cache.get(ids.main_guild_id);
-      if (!mainGuild) return;
+    let db = await prisma.interactionLogs.findFirst({
+      where: {
+        id: mainGuild.id
+      },
+      select: {
+        lastUpdated: true,
+        messageId: true
+      }
+    });
 
-      let db = await prisma.interactionLogger.findFirst({
+    const logsChannel = (await mainGuild.channels.fetch())
+      .filter(c => c!.type === ChannelType.GuildText)
+      .get(ids.channel_ids['bot-logs']) as TextChannel;
+    if (!logsChannel) return logger.warn(`logs channel non existent`);
+
+    const upsert = async (message: Message<true>) => {
+      await prisma.interactionLogs.upsert({
         where: {
-          id: mainGuild.id
+          id: message.guildId
+        },
+        create: {
+          id: message.guildId,
+          messageId: message.id,
+          lastUpdated: new Date()
+        },
+        update: {
+          messageId: message.id,
+          lastUpdated: new Date()
         }
       });
-      const sendNewMessage = async (channel: TextChannel) => {
-        const messageContent = Array.from(_cache.values()).join('\n');
-        const message = await channel.send(`\`\`\`ts\n${messageContent}\`\`\``);
+    };
 
-        await prisma.interactionLogger.upsert({
-          where: {
-            id: channel.guildId
-          },
-          create: {
-            id: channel.guildId,
-            messageId: message.id
-          },
-          update: {
-            messageId: message.id
-          }
-        });
-        _cache.clear();
-        lastUpdateTime = Date.now();
-        return message;
-      };
+    const sendMessage = async () => {
+      const firstEntry = _cache.values().next().value;
+      if (!firstEntry) return;
 
-      let logsChannel: TextChannel | null = null;
-      try {
-        logsChannel = (await mainGuild.channels.fetch())
-          .filter(c => c!.type === ChannelType.GuildText)
-          .get(ids.channel_ids['bot-logs']) as TextChannel;
-        if (!logsChannel) return;
-        if (!db || !db.messageId) {
-          return await sendNewMessage(logsChannel);
-        }
-        let lastMessage = (await logsChannel.messages.fetch({ cache: false })).get(db.messageId);
+      let m = await logsChannel.send(`\`\`\`ts\n${firstEntry}\`\`\``);
+      await upsert(m);
+      _cache.delete(_cache.keys().next().value);
+    };
 
-        if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts')) {
-          const currentContent = lastMessage.content.slice(6, -3);
-          const newContent = `${currentContent}\n${Array.from(_cache.values()).join('\n')}`.trim();
+    const editMessage = async (messageToEdit: Message<true>, newContent: string) => {
+      let m = await messageToEdit.edit(newContent);
+      await upsert(m);
+    };
 
-          if (newContent.length + 9 <= 2000) {
-            await lastMessage.edit(`\`\`\`ts\n${newContent}\`\`\``);
-          } else {
-            await sendNewMessage(logsChannel);
-          }
+    const lastMessage = (await logsChannel.messages.fetch({ cache: false })).get(db?.messageId ?? '');
+    const timeSinceLastUpdate = db ? Date.now() - new Date(db.lastUpdated).getTime() : Infinity;
+
+    try {
+      if (!db) {
+        await sendMessage();
+      } else if (lastMessage && lastMessage.author.id === client.user!.id && lastMessage.content.startsWith('```ts')) {
+        let messageContent = Array.from(_cache.values()).join('\n');
+        const currentContent = lastMessage.content.slice(6, -3);
+        const newContent = `${currentContent}\n${messageContent}`.trim();
+
+        if (newContent.length + 9 <= 2000 && (_cache.size >= 5 || timeSinceLastUpdate >= 2 * 60 * 1000)) {
+          await editMessage(lastMessage, `\`\`\`ts\n${newContent}\`\`\``);
           _cache.clear();
-          lastUpdateTime = Date.now();
-        } else {
-          await sendNewMessage(logsChannel);
         }
-      } catch (error: any) {
-        logger.error(error);
-        if (logsChannel) {
-          if (error.message === 'Unknown Message') {
-            await sendNewMessage(logsChannel);
-          } else {
-            await logsChannel.send(error.message);
-          }
-        }
+      }
+    } catch (error: any) {
+      if (error.message == 'Unknown Message') {
+        await sendMessage();
       }
     }
   }

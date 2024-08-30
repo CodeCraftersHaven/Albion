@@ -35,7 +35,8 @@ model Profile {
   ouid            String
 }
 
-model InteractionLogger {
-  id        String @id @map("_id")
-  messageId String
+model InteractionLogs {
+  id          String   @id @map("_id")
+  messageId   String
+  lastUpdated DateTime
 }
