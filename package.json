@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "@napi-rs/canvas": "^0.1.53",
-    "@prisma/client": "5.17.0",
+    "@prisma/client": "5.19.0",
     "@sern/handler": "^4.0.2",
     "@sern/publisher": "^1.1.2",
     "@spark.ts/logger": "^1.4.0",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
-    "prisma": "^5.17.0",
+    "prisma": "^5.19.0",
     "typescript": "^5.5.4"
   },
   "imports": {
