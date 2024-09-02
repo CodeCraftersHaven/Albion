@@ -4,12 +4,7 @@ import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 export class Albion extends Client {
   constructor(private cooldowns: Cooldowns) {
     super({
-      intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildPresences,
-        GatewayIntentBits.DirectMessages
-      ],
+      intents: [GatewayIntentBits.Guilds],
       allowedMentions: {
         repliedUser: false
       },
