@@ -36,16 +36,16 @@
   ],
   "dependencies": {
     "@napi-rs/canvas": "^0.1.53",
-    "@prisma/client": "5.19.0",
+    "@prisma/client": "5.20.0",
     "@sern/handler": "^4.0.2",
     "@sern/publisher": "^1.1.2",
     "@spark.ts/logger": "^1.4.0",
     "colorette": "^2.0.20",
-    "discord.js": "14.16.1"
+    "discord.js": "14.16.2"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
-    "prisma": "^5.19.0",
+    "@types/node": "^22.7.3",
+    "prisma": "^5.20.0",
     "typescript": "^5.5.4"
   },
   "imports": {
